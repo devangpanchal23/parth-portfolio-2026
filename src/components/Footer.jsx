@@ -1,0 +1,72 @@
+import React, { useState } from 'react';
+import { motion } from 'framer-motion';
+import EmailModal from './EmailModal';
+
+export const Footer = () => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const openModal = () => setIsModalOpen(true);
+  const closeModal = () => setIsModalOpen(false);
+
+  return (
+    <>
+      <EmailModal isOpen={isModalOpen} onClose={closeModal} />
+  <section id="contact" className="w-full bg-[#0a0a0a] flex flex-col pt-32 md:pt-40 pb-20 md:pb-32 px-10 md:px-20 text-white relative z-10">
+    <motion.div 
+      className="w-full flex justify-center mb-24 md:mb-40"
+      initial={{ opacity: 0, y: 30 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ duration: 1, ease: "easeOut" }}
+    >
+      <motion.h2 
+        className="text-6xl md:text-[100px] lg:text-[120px] font-bold tracking-tighter text-white cursor-pointer opacity-20 hover:opacity-100 transition-opacity duration-700 ease-in-out"
+        whileHover={{ scale: 1.02 }}
+        transition={{ duration: 0.5, ease: "easeOut" }}
+      >
+        Thank you.
+      </motion.h2>
+    </motion.div>
+    <div className="w-full max-w-[1400px] mx-auto flex flex-col md:flex-row justify-between items-center md:items-end gap-16 md:gap-0">
+      <motion.div 
+        className="flex flex-col gap-2 text-center md:text-left"
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.8, delay: 0.2 }}
+      >
+        <a href="#" className="text-[10px] md:text-[11px] text-[#A1A1A1] uppercase tracking-widest font-semibold hover:text-white transition-colors cursor-pointer block">Instagram</a>
+        <a href="#" className="text-[10px] md:text-[11px] text-[#A1A1A1] uppercase tracking-widest font-semibold hover:text-white transition-colors cursor-pointer block">LinkedIn</a>
+        <a href="#" className="text-[10px] md:text-[11px] text-[#A1A1A1] uppercase tracking-widest font-semibold hover:text-white transition-colors cursor-pointer block">Email</a>
+        <div className="mt-10 md:mt-12 text-[9px] text-[#555] tracking-widest uppercase font-semibold">2026 &copy; Parth Panchal</div>
+      </motion.div>
+      <motion.div 
+        className="flex flex-col gap-1 text-center"
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.8, delay: 0.4 }}
+      >
+        <p className="text-[10px] md:text-[11px] text-[#A1A1A1] uppercase tracking-widest font-semibold">Surat</p>
+        <p className="text-[10px] md:text-[11px] text-[#A1A1A1] uppercase tracking-widest font-semibold">India</p>
+      </motion.div>
+      <motion.div 
+        className="flex flex-col items-center md:items-end gap-6"
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.8, delay: 0.6 }}
+      >
+        <p className="text-xl md:text-2xl font-medium tracking-tight text-white">Let's chat :)</p>
+        <button 
+          onClick={openModal}
+          className="bg-white text-black px-8 py-3 rounded-full text-[10px] md:text-[11px] font-bold tracking-widest uppercase hover:scale-105 hover:bg-gray-200 transition-all duration-300 cursor-pointer shadow-lg shadow-white/5"
+        >
+          Let's Connect
+        </button>
+      </motion.div>
+    </div>
+  </section>
+    </>
+  );
+};
