@@ -7,10 +7,10 @@ export const Navbar = () => (
       <div className="w-1/3 text-left pointer-events-auto">
         <a href="/">Parth Panchal</a>
       </div>
-      <div className="w-1/3 flex justify-center gap-6 pointer-events-auto">
-        <a href="/#work" className="hover:text-white transition-colors cursor-pointer">Work</a>
-        <a href="/#about" className="hover:text-white transition-colors cursor-pointer">About</a>
-        <a href="/#contact" className="hover:text-white transition-colors cursor-pointer">Contact</a>
+      <div className="w-1/3 flex justify-center gap-8 md:gap-12 pointer-events-auto text-xs md:text-sm font-medium tracking-widest">
+        <a href="/#work" className="hover:text-white transition-colors cursor-pointer">WORK</a>
+        <a href="/#about" className="hover:text-white transition-colors cursor-pointer">ABOUT</a>
+        <a href="/#contact" className="hover:text-white transition-colors cursor-pointer">CONTACT</a>
       </div>
       <div className="w-1/3 text-right pointer-events-auto">
         ©2026

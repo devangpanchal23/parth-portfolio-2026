@@ -83,11 +83,10 @@ const HeroSection = () => {
       const el = poolRefs.current[currentIndex.current];
       if (!el) return;
 
-      // Assign cinematic image and aspect ratio
+      // Assign cinematic image
       const imgData = IMAGES[imgIndex.current];
       const imgNode = el.querySelector('img');
       imgNode.src = imgData.src;
-      el.style.aspectRatio = imgData.aspect;
       
       // Update cyclers
       imgIndex.current = (imgIndex.current + 1) % IMAGES.length;
@@ -187,12 +186,12 @@ const HeroSection = () => {
       className="relative w-full h-[100vh] bg-black overflow-hidden flex items-center justify-center cursor-crosshair"
     >
       {/* --- Dynamic Image Pool --- */}
-      <div className="absolute inset-0 pointer-events-none z-[10]">
+      <div className="absolute inset-0 pointer-events-none z-[1500]">
         {Array.from({ length: POOL_SIZE }).map((_, i) => (
           <div
             key={i}
             ref={(el) => (poolRefs.current[i] = el)}
-            className="absolute top-0 left-0 w-[clamp(140px,18vw,300px)] opacity-0 overflow-hidden bg-zinc-900"
+            className="absolute top-0 left-0 w-[245px] h-[170px] opacity-0 overflow-hidden bg-zinc-900 shadow-xl"
             style={{ willChange: 'transform, opacity' }}
           >
             <img
@@ -212,29 +211,36 @@ const HeroSection = () => {
         >
           Parth Panchal
         </h1>
+      </div>
+
+      {/* --- Center Bottom Tagline --- */}
+      <div className="absolute bottom-10 md:bottom-16 left-1/2 -translate-x-1/2 z-[1000] pointer-events-none select-none w-full text-center px-4">
         <p
           ref={subtextRef}
-          className="mt-6 text-[clamp(8px,1vw,12px)] uppercase tracking-[0.4em] font-bold text-white/40"
+          className="text-xs md:text-sm lg:text-base uppercase tracking-[0.6em] md:tracking-[0.8em] font-medium text-white/90 leading-[2]"
         >
-          Cinematic Storytelling through Precision Editing
+          Cinematic Storytelling <br />
+          through Precision Editing
         </p>
       </div>
 
-      {/* --- Corner UI --- */}
-      <div className="absolute inset-0 z-[2000] pointer-events-none p-10 flex flex-col justify-between mix-blend-difference text-[10px] tracking-[0.2em] font-bold uppercase text-white/70">
-        <div className="flex justify-between items-start">
-          <div className="flex flex-col gap-1">
-            <span>Parth Panchal</span>
-            <span className="text-white/30">Video Editor</span>
-          </div>
-          <div className="flex gap-10">
-            <a href="#work" className="pointer-events-auto hover:text-white transition-colors">Work</a>
-            <a href="#about" className="pointer-events-auto hover:text-white transition-colors">About</a>
-            <a href="#contact" className="pointer-events-auto hover:text-white transition-colors">Contact</a>
-          </div>
+      {/* --- Top Navigation UI --- */}
+      <div className="absolute top-0 left-0 w-full z-[2000] pointer-events-none p-6 md:p-10 flex justify-between items-start mix-blend-difference text-xs md:text-sm tracking-widest font-medium uppercase text-gray-200">
+        {/* LEFT */}
+        <div className="flex flex-col gap-1 w-[30%] text-left">
+          <span className="text-white">PARTH PANCHAL</span>
+          <span className="text-white/40">VIDEO EDITOR</span>
         </div>
-        <div className="flex justify-between items-end">
-          <span>Based Worldwide</span>
+        
+        {/* CENTER */}
+        <div className="flex justify-center gap-8 md:gap-12 w-[40%] text-white pointer-events-auto">
+          <a href="#work" className="hover:text-white transition-colors duration-300">WORK</a>
+          <a href="#about" className="hover:text-white transition-colors duration-300">ABOUT</a>
+          <a href="#contact" className="hover:text-white transition-colors duration-300">CONTACT</a>
+        </div>
+
+        {/* RIGHT */}
+        <div className="w-[30%] text-right text-white">
           <span>©2026</span>
         </div>
       </div>
