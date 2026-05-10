@@ -5,7 +5,7 @@ import { projectsData } from '../data';
 import { Navbar } from '../components/Navbar';
 import { Footer } from '../components/Footer';
 import ImageCompareSlider from '../components/ImageCompareSlider';
-import VideoShowcase from '../components/VideoShowcase';
+import VideoPlayer from '../components/VideoPlayer';
 import ProjectVideo from '../components/ProjectVideo';
 
 export const ProjectDetail = ({ setIsImageHovered }) => {
@@ -98,27 +98,13 @@ export const ProjectDetail = ({ setIsImageHovered }) => {
           // Render video
           if (item.type === 'video') {
             return (
-              <section key={idx} className="w-full max-w-[1500px] mx-auto px-4 md:px-12 pb-32">
-                <motion.div
-                  className={`w-full overflow-hidden bg-[#1a1a1a] rounded-[4px] cursor-hover ${item.aspect || 'aspect-[16/10]'}`}
-                  initial={{ opacity: 0, y: 50 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, margin: '-100px' }}
-                  transition={{ duration: 0.8 }}
-                  onMouseEnter={() => setIsImageHovered && setIsImageHovered(true)}
-                  onMouseLeave={() => setIsImageHovered && setIsImageHovered(false)}
-                >
-                  <video
-                    className="w-full h-full object-cover"
-                    src={item.src}
-                    preload="metadata"
-                    controls
-                    muted
-                    loop
-                    playsInline
-                    onError={(e) => { /* swallow and skip if video fails */ }}
-                  />
-                </motion.div>
+              <section key={idx} className="w-full max-w-[1500px] mx-auto px-4 md:px-12 pb-32" onMouseEnter={() => setIsImageHovered && setIsImageHovered(true)} onMouseLeave={() => setIsImageHovered && setIsImageHovered(false)}>
+                <VideoPlayer 
+                  videoSrc={item.src}
+                  posterImage={item.poster || ""}
+                  className={`w-full ${item.aspect || 'aspect-[16/10]'}`}
+                  autoPlay={false}
+                />
               </section>
             );
           }
@@ -172,11 +158,13 @@ export const ProjectDetail = ({ setIsImageHovered }) => {
               )}
 
               {section.type === 'video' && (
-                <VideoShowcase
-                  videoSrc={section.src}
-                  posterImage={section.poster}
-                  className="w-full aspect-video"
-                />
+                <div className="w-full cursor-hover" onMouseEnter={() => setIsImageHovered && setIsImageHovered(true)} onMouseLeave={() => setIsImageHovered && setIsImageHovered(false)}>
+                  <VideoPlayer
+                    videoSrc={section.src}
+                    posterImage={section.poster}
+                    className="w-full aspect-video"
+                  />
+                </div>
               )}
 
               {section.type === 'youtube' && (

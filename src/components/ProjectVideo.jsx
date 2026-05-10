@@ -1,22 +1,47 @@
-import React from 'react';
+import React, { useMemo } from 'react';
+import { motion } from 'framer-motion';
 
-const ProjectVideo = ({ src = "https://www.youtube.com/embed/Jcj6kJvc_Vw" }) => {
+const ProjectVideo = ({ src, className = "aspect-[16/9]" }) => {
+  // Ensure the YouTube URL has the cleanest possible parameters for a portfolio
+  const cleanUrl = useMemo(() => {
+    if (!src) return "";
+    try {
+      const url = new URL(src);
+      // Only modify YouTube URLs
+      if (url.hostname.includes('youtube.com') || url.hostname.includes('youtu.be')) {
+        url.searchParams.set('rel', '0');
+        url.searchParams.set('modestbranding', '1');
+        url.searchParams.set('showinfo', '0');
+        url.searchParams.set('color', 'white');
+        url.searchParams.set('playsinline', '1');
+      }
+      return url.toString();
+    } catch (e) {
+      return src; // Fallback to raw src if parsing fails
+    }
+  }, [src]);
+
+  if (!src) return null;
+
   return (
-    <div className="w-full flex justify-center items-center">
-      <div 
-        className="w-full relative overflow-hidden rounded-[16px] shadow-[0_8px_30px_rgb(0,0,0,0.12)] transition-transform duration-500 ease-out hover:scale-[1.02] bg-[#1a1a1a]"
-        style={{ aspectRatio: '16/9' }}
+    <div className="w-full flex justify-center items-center group">
+      <motion.div 
+        className={`w-full relative overflow-hidden rounded-[4px] shadow-[0_20px_60px_rgba(0,0,0,0.5)] transition-transform duration-700 ease-out bg-[#0a0a0a] border border-white/5 ${className}`}
+        initial={{ opacity: 0, y: 50 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-100px" }}
+        transition={{ duration: 0.8 }}
       >
         <iframe
-          src={src}
-          title="YouTube video player"
+          src={cleanUrl}
+          title="Project Video"
           className="absolute top-0 left-0 w-full h-full"
           frameBorder="0"
-          allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
           allowFullScreen
           loading="lazy"
         ></iframe>
-      </div>
+      </motion.div>
     </div>
   );
 };
