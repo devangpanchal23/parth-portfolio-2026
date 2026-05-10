@@ -14,7 +14,8 @@ export default {
         accentSolid: "#7c3aed",
       },
       fontFamily: {
-        sans: ['Inter', 'Helvetica', 'Arial', 'sans-serif'],
+        sans: ['Switzer', 'sans-serif'],
+        display: ['Clash Display', 'sans-serif'],
       },
       animation: {
         'bounce-slow': 'bounce 2s infinite',

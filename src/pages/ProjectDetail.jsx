@@ -4,6 +4,9 @@ import { motion } from 'framer-motion';
 import { projectsData } from '../data';
 import { Navbar } from '../components/Navbar';
 import { Footer } from '../components/Footer';
+import ImageCompareSlider from '../components/ImageCompareSlider';
+import VideoShowcase from '../components/VideoShowcase';
+import ProjectVideo from '../components/ProjectVideo';
 
 export const ProjectDetail = ({ setIsImageHovered }) => {
   const { slug } = useParams();
@@ -23,6 +26,10 @@ export const ProjectDetail = ({ setIsImageHovered }) => {
     );
   }
 
+  const projectKeys = Object.keys(projectsData);
+  const currentIndex = projectKeys.indexOf(slug);
+  const nextSlug = projectKeys[(currentIndex + 1) % projectKeys.length];
+
   return (
     <div className="w-full relative bg-[#0A0A0A] text-white">
       <Navbar />
@@ -30,38 +37,38 @@ export const ProjectDetail = ({ setIsImageHovered }) => {
       {/* --- PROJECT HEADER --- */}
       <section className="w-full max-w-[1500px] mx-auto px-6 md:px-12 pt-40 md:pt-56 pb-20 flex flex-col lg:flex-row gap-16 lg:gap-32">
         {/* Left: Title & Description */}
-        <motion.div 
+        <motion.div
           className="w-full lg:w-[60%] flex flex-col gap-8"
           initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }}
         >
-          <h1 className="text-5xl md:text-[80px] lg:text-[100px] font-bold leading-[1.05] tracking-tighter">
+          <h1 className="font-display text-5xl md:text-[80px] lg:text-[100px] font-semibold leading-[0.95] tracking-[-2px]" style={{ textWrap: 'balance' }}>
             {project.title}
           </h1>
-          <p className="text-[#a1a1a1] text-sm md:text-base leading-[1.8] max-w-[600px]">
+          <p className="font-sans text-[18px] md:text-[20px] leading-[1.6] max-w-[600px] text-white/70">
             {project.description}
           </p>
         </motion.div>
 
         {/* Right: Metadata Grid */}
-        <motion.div 
-          className="w-full lg:w-[40%] grid grid-cols-2 gap-x-8 gap-y-12 content-start"
+        <motion.div
+          className="w-full lg:w-[40%] grid grid-cols-2 gap-x-8 gap-y-10 content-start lg:pt-2"
           initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.2 }}
         >
-          <div className="flex flex-col gap-2">
-            <h4 className="text-[10px] text-[#555] tracking-widest uppercase font-bold">Client</h4>
-            <p className="text-[11px] md:text-xs text-[#d1d1d1] tracking-widest uppercase font-semibold">{project.client}</p>
+          <div className="flex flex-col gap-1.5">
+            <h4 className="font-sans text-[8px] md:text-[9px] text-[#666] tracking-[0.15em] uppercase font-bold">Client</h4>
+            <p className="font-sans text-[10px] md:text-[11px] text-[#eee] tracking-[0.1em] uppercase font-bold">{project.client}</p>
           </div>
-          <div className="flex flex-col gap-2">
-            <h4 className="text-[10px] text-[#555] tracking-widest uppercase font-bold">Year</h4>
-            <p className="text-[11px] md:text-xs text-[#d1d1d1] tracking-widest uppercase font-semibold">{project.year}</p>
+          <div className="flex flex-col gap-1.5">
+            <h4 className="font-sans text-[8px] md:text-[9px] text-[#666] tracking-[0.15em] uppercase font-bold">Year</h4>
+            <p className="font-sans text-[10px] md:text-[11px] text-[#eee] tracking-[0.1em] uppercase font-bold">{project.year}</p>
           </div>
-          <div className="flex flex-col gap-2">
-            <h4 className="text-[10px] text-[#555] tracking-widest uppercase font-bold">Role</h4>
-            <p className="text-[11px] md:text-xs text-[#d1d1d1] tracking-widest uppercase font-semibold">{project.role}</p>
+          <div className="flex flex-col gap-1.5">
+            <h4 className="font-sans text-[8px] md:text-[9px] text-[#666] tracking-[0.15em] uppercase font-bold">Role</h4>
+            <p className="font-sans text-[10px] md:text-[11px] text-[#eee] tracking-[0.1em] uppercase font-bold">{project.role}</p>
           </div>
-          <div className="flex flex-col gap-2">
-            <h4 className="text-[10px] text-[#555] tracking-widest uppercase font-bold">Deliverables</h4>
-            <p className="text-[11px] md:text-xs text-[#d1d1d1] tracking-widest uppercase font-semibold">{project.deliverables}</p>
+          <div className="flex flex-col gap-1.5">
+            <h4 className="font-sans text-[8px] md:text-[9px] text-[#666] tracking-[0.15em] uppercase font-bold">Deliverables</h4>
+            <p className="font-sans text-[10px] md:text-[11px] text-[#eee] tracking-[0.1em] uppercase font-bold">{project.deliverables}</p>
           </div>
         </motion.div>
       </section>
@@ -124,7 +131,7 @@ export const ProjectDetail = ({ setIsImageHovered }) => {
         <>
           {/* --- HERO MEDIA --- */}
           <motion.section
-            className="w-full px-4 md:px-8 pb-32"
+            className="w-full max-w-[1500px] mx-auto px-4 md:px-12 pb-32"
             initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1, delay: 0.4 }}
           >
             <div
@@ -145,6 +152,38 @@ export const ProjectDetail = ({ setIsImageHovered }) => {
                   onMouseEnter={() => setIsImageHovered && setIsImageHovered(true)} onMouseLeave={() => setIsImageHovered && setIsImageHovered(false)}
                 >
                   <img src={section.src} className="w-full h-full object-cover" loading="lazy" alt="Project Shot" />
+                </motion.div>
+              )}
+
+              {section.type === 'compare' && (
+                <motion.div
+                  className={`w-full overflow-hidden bg-[#1a1a1a] rounded-[4px] cursor-hover ${section.aspect || 'aspect-video'}`}
+                  initial={{ opacity: 0, y: 50 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-100px" }} transition={{ duration: 0.8 }}
+                  onMouseEnter={() => setIsImageHovered && setIsImageHovered(true)} onMouseLeave={() => setIsImageHovered && setIsImageHovered(false)}
+                >
+                  <div className="w-full h-full relative group">
+                    <ImageCompareSlider
+                      beforeImage={section.before}
+                      afterImage={section.after}
+                      alt="Before and After Grade"
+                    />
+                  </div>
+                </motion.div>
+              )}
+
+              {section.type === 'video' && (
+                <VideoShowcase
+                  videoSrc={section.src}
+                  posterImage={section.poster}
+                  className="w-full aspect-video"
+                />
+              )}
+
+              {section.type === 'youtube' && (
+                <motion.div
+                  initial={{ opacity: 0, y: 50 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-100px" }} transition={{ duration: 0.8 }}
+                >
+                  <ProjectVideo src={section.src} />
                 </motion.div>
               )}
 
@@ -172,11 +211,13 @@ export const ProjectDetail = ({ setIsImageHovered }) => {
       )}
 
       {/* --- NEXT PROJECT CTA --- */}
-      {project.nextSlug && (
-        <section className="w-full py-40 border-t border-[#1a1a1a] flex flex-col items-center justify-center text-center px-4 group cursor-pointer" onClick={() => navigate(`/project/${project.nextSlug}`)}>
-          <p className="text-[10px] md:text-sm text-[#666] tracking-widest uppercase font-bold mb-8 transition-colors group-hover:text-white">Next Project</p>
-          <h2 className="text-5xl md:text-[80px] lg:text-[100px] font-bold tracking-tighter text-white transition-opacity group-hover:opacity-70">
-            {project.nextTitle}
+      {nextSlug && (
+        <section className="w-full py-40 border-t border-[#1a1a1a] flex flex-col items-center justify-center text-center px-4 group cursor-pointer overflow-hidden" onClick={() => navigate(`/project/${nextSlug}`)}>
+          <h2
+            className="font-display text-5xl md:text-[80px] lg:text-[100px] font-semibold tracking-[-2px] text-white transition-all duration-500 ease-in-out group-hover:scale-[1.03] group-hover:opacity-70 max-w-[1000px] mx-auto origin-center"
+            style={{ textWrap: 'balance' }}
+          >
+            Next Project
           </h2>
         </section>
       )}

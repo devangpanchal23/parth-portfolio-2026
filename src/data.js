@@ -9,6 +9,8 @@ export const projectsData = {
     heroImage: "https://images.unsplash.com/photo-1601004890684-d8cbf643f5f2?w=1600&q=80",
     sections: [
       { type: "full", src: "https://images.unsplash.com/photo-1542204165-65bf26472b9b?w=2000&q=80" },
+      { type: "compare", before: "https://images.unsplash.com/photo-1601004890684-d8cbf643f5f2?w=1600&q=80&sat=-50&con=-30", after: "https://images.unsplash.com/photo-1601004890684-d8cbf643f5f2?w=1600&q=80&sat=20&con=20", aspect: "aspect-[16/9]" },
+      { type: "youtube", src: "https://www.youtube.com/embed/Jcj6kJvc_Vw" },
       { type: "grid", src1: "https://images.unsplash.com/photo-1558507652-2d9626c15112?w=1000&q=80", src2: "https://images.unsplash.com/photo-1587329310686-91414b8e3cb7?w=1000&q=80" }
     ],
     nextSlug: "pepsi-generation",
@@ -23,7 +25,9 @@ export const projectsData = {
     description: "A vibrant, fast-paced commercial cutting sharply to an original score. Designed to capture youth culture and high-energy moments.",
     heroImage: "https://images.unsplash.com/photo-1622483767028-3f66f32aef97?w=1600&q=80",
     sections: [
-       { type: "full", src: "https://images.unsplash.com/photo-1587329310686-91414b8e3cb7?w=2000&q=80" },
+      { type: "compare", before: "https://images.unsplash.com/photo-1622483767028-3f66f32aef97?w=1600&q=80&exp=-40&con=10", after: "https://images.unsplash.com/photo-1622483767028-3f66f32aef97?w=1600&q=80&exp=0", aspect: "aspect-[16/10]" },
+      { type: "video", src: "https://videos.pexels.com/video-files/4010134/4010134-uhd_3840_2160_25fps.mp4", poster: "https://images.unsplash.com/photo-1622483767028-3f66f32aef97?w=1600&q=80" },
+      { type: "full", src: "https://images.unsplash.com/photo-1587329310686-91414b8e3cb7?w=2000&q=80" },
     ],
     nextSlug: "project-rock",
     nextTitle: "Under Armour x Project Rock"
@@ -37,6 +41,8 @@ export const projectsData = {
     description: "Gritty, powerful, and intense. A sports commercial focusing on pushing limits and breaking barriers.",
     heroImage: "https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?w=1600&q=80",
     sections: [
+      { type: "compare", before: "https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?w=1600&q=80&sat=-10&con=-20", after: "https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?w=1600&q=80&sat=10&con=30", aspect: "aspect-[16/9]" },
+      { type: "video", src: "https://videos.pexels.com/video-files/3206020/3206020-uhd_2560_1440_25fps.mp4", poster: "https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?w=1600&q=80" },
       { type: "full", src: "https://images.unsplash.com/photo-1542204165-65bf26472b9b?w=2000&q=80" },
     ],
     nextSlug: "leaf-moon",
@@ -52,6 +58,8 @@ export const projectsData = {
     heroImage: "https://images.unsplash.com/photo-1587329310686-91414b8e3cb7?w=1600&q=80",
     sections: [
       { type: "full", src: "https://images.unsplash.com/photo-1587329310686-91414b8e3cb7?w=2000&q=80" },
+      { type: "compare", before: "https://images.unsplash.com/photo-1587329310686-91414b8e3cb7?w=1600&q=80&sat=-40&con=-10", after: "https://images.unsplash.com/photo-1587329310686-91414b8e3cb7?w=1600&q=80&sat=30&con=20", aspect: "aspect-video" },
+      { type: "video", src: "https://videos.pexels.com/video-files/853889/853889-hd_1920_1080_25fps.mp4", poster: "https://images.unsplash.com/photo-1587329310686-91414b8e3cb7?w=2000&q=80" },
       { type: "grid", src1: "https://images.unsplash.com/photo-1558507652-2d9626c15112?w=1000&q=80", src2: "https://images.unsplash.com/photo-1601004890684-d8cbf643f5f2?w=1000&q=80" }
     ],
     nextSlug: "project-rock",
@@ -65,7 +73,9 @@ export const projectsData = {
     deliverables: "Editing",
     description: "A surreal indie narrative film exploring human connection through beautiful cinematic sequences.",
     heroImage: "https://images.unsplash.com/photo-1542204165-65bf26472b9b?w=2000&q=80",
-    sections: [],
+    sections: [
+      { type: "compare", before: "https://images.unsplash.com/photo-1542204165-65bf26472b9b?w=2000&q=80&sat=-60", after: "https://images.unsplash.com/photo-1542204165-65bf26472b9b?w=2000&q=80&sat=30", aspect: "aspect-[24/9]" }
+    ],
     nextSlug: "canada-goose",
     nextTitle: "Canada Goose: Heritage & Craftsmanship"
   }

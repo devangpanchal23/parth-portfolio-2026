@@ -1,0 +1,173 @@
+:root {
+  --ic-handle-size: 40px;
+}
+
+.image-compare {
+  position: absolute;
+  /* Takes exact size of parent container */
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  user-select: none;
+  touch-action: none;
+  background-color: transparent;
+}
+
+.ic-image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  pointer-events: none;
+  will-change: clip-path;
+  /* Optimization for sliding */
+}
+
+.ic-before {
+  z-index: 1;
+}
+
+.ic-after {
+  z-index: 2;
+  /* Clip path set dynamically via inline style */
+}
+
+.ic-handle {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--ic-handle-size);
+  height: 100%;
+  cursor: ew-resize;
+  z-index: 10;
+  -webkit-tap-highlight-color: transparent;
+  outline: none;
+}
+
+.ic-line {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  transform: translateX(-50%);
+  background: rgba(255, 255, 255, 0.4);
+  pointer-events: none;
+  transition: background 0.3s ease;
+}
+
+.ic-knob {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(10, 10, 10, 0.5);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform: translateZ(0);
+  transition: transform 300ms cubic-bezier(0.16, 1, 0.3, 1), background 300ms ease, border-color 300ms ease;
+  pointer-events: none;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+}
+
+.ic-knob::before,
+.ic-knob::after {
+  content: '';
+  position: absolute;
+  width: 0;
+  height: 0;
+  border-style: solid;
+}
+
+.ic-knob::before {
+  border-width: 4px 5px 4px 0;
+  border-color: transparent rgba(255, 255, 255, 0.7) transparent transparent;
+  left: 8px;
+  transition: border-color 0.3s ease;
+}
+
+.ic-knob::after {
+  border-width: 4px 0 4px 5px;
+  border-color: transparent transparent transparent rgba(255, 255, 255, 0.7);
+  right: 8px;
+  transition: border-color 0.3s ease;
+}
+
+.ic-handle:hover .ic-knob,
+.ic-handle:focus-visible .ic-knob {
+  transform: translateZ(0) scale(1.1);
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.ic-handle:hover .ic-knob::before {
+  border-color: transparent rgba(255, 255, 255, 1) transparent transparent;
+}
+
+.ic-handle:hover .ic-knob::after {
+  border-color: transparent transparent transparent rgba(255, 255, 255, 1);
+}
+
+.ic-handle:hover .ic-line,
+.ic-handle:focus-visible .ic-line {
+  background: rgba(255, 255, 255, 0.6);
+}
+
+.ic-handle:active .ic-knob {
+  transform: translateZ(0) scale(0.95);
+}
+
+.ic-label {
+  position: absolute;
+  top: 16px;
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: rgba(255, 255, 255, 0.7);
+  z-index: 8;
+  padding: 4px 8px;
+  border-radius: 2px;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+  opacity: 0;
+}
+
+/* Show labels only on hover for minimal aesthetic */
+.image-compare:hover .ic-label {
+  opacity: 1;
+}
+
+.ic-label-left {
+  left: 16px;
+}
+
+.ic-label-right {
+  right: 16px;
+}
+
+/* hit area */
+.ic-handle::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 60px;
+  /* Generous touch area */
+  height: 100%;
+}
