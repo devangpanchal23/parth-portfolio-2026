@@ -1,316 +1,246 @@
-/**
- * HeroSection.jsx — Premium Framer-inspired hero
- * ─────────────────────────────────────────────────────────────────
- * Drop-in, self-contained. Does NOT modify any parent component.
- *
- * Animations:
- *  • Entry: GSAP clip-path reveal (bottom→top) + scale settle
- *  • Scroll: GSAP ScrollTrigger parallax per-image
- *  • Mouse: rAF lerp parallax (slow + smooth = premium)
- *  • Hover: CSS transition scale (GPU composited)
- *
- * Performance: transform + opacity only, will-change, translate3d
- * ─────────────────────────────────────────────────────────────────
- */
-
 import React, { useEffect, useRef } from 'react';
 import gsap from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
-gsap.registerPlugin(ScrollTrigger);
-
-/* ── Image Config ──────────────────────────────────────────────── */
+/* ── Cinematic Image Config ────────────────────────────────────── */
 const IMAGES = [
-  {
-    id: 'h-tl',
-    src: 'https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?w=640&q=85',
-    alt: 'Cinematic portrait',
-    style: { top: '8%', left: '2%', width: 'clamp(130px, 18vw, 240px)' },
-    aspect: '9/16', speed: -70,  mouseFactor: 0.013, delay: 0.1,  rot: -3,
-  },
-  {
-    id: 'h-tr',
-    src: 'https://images.unsplash.com/photo-1493246507139-91e8fad9978e?w=800&q=85',
-    alt: 'Mountain landscape',
-    style: { top: '5%', right: '3%', width: 'clamp(160px, 25vw, 310px)' },
-    aspect: '16/9', speed: -130, mouseFactor: 0.019, delay: 0.25, rot: 2,
-  },
-  {
-    id: 'h-ml',
-    src: 'https://images.unsplash.com/photo-1518609878373-06d740f60d8b?w=640&q=85',
-    alt: 'Square editorial',
-    style: { top: '40%', left: '0%', width: 'clamp(110px, 16vw, 200px)' },
-    aspect: '1/1',  speed: -45,  mouseFactor: 0.008, delay: 0.4,  rot: -1.5,
-  },
-  {
-    id: 'h-mr',
-    src: 'https://images.unsplash.com/photo-1515238152791-38cadbf34645?w=640&q=85',
-    alt: 'Abstract motion',
-    style: { top: '33%', right: '0%', width: 'clamp(120px, 17vw, 220px)' },
-    aspect: '9/16', speed: -155, mouseFactor: 0.023, delay: 0.15, rot: 4,
-  },
-  {
-    id: 'h-bl',
-    src: 'https://images.unsplash.com/photo-1542385151-efd9000785a0?w=800&q=85',
-    alt: 'Urban architecture',
-    style: { bottom: '5%', left: '4%', width: 'clamp(140px, 22vw, 280px)' },
-    aspect: '16/9', speed: -90,  mouseFactor: 0.015, delay: 0.35, rot: -2,
-  },
-  {
-    id: 'h-br',
-    src: 'https://images.unsplash.com/photo-1505322022379-7c3353ee6291?w=640&q=85',
-    alt: 'Night cityscape',
-    style: { bottom: '7%', right: '2%', width: 'clamp(130px, 19vw, 245px)' },
-    aspect: '1/1',  speed: -55,  mouseFactor: 0.010, delay: 0.5,  rot: 1.5,
-  },
+  { src: 'https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?w=800&q=80', aspect: '16/9' },
+  { src: 'https://images.unsplash.com/photo-1493246507139-91e8fad9978e?w=800&q=80', aspect: '4/3' },
+  { src: 'https://images.unsplash.com/photo-1518609878373-06d740f60d8b?w=800&q=80', aspect: '3/4' },
+  { src: 'https://images.unsplash.com/photo-1478720568477-152d9b164e26?w=800&q=80', aspect: '16/9' },
+  { src: 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=800&q=80', aspect: '4/3' },
+  { src: 'https://images.unsplash.com/photo-1485846234645-a62644f84728?w=800&q=80', aspect: '1/1' },
 ];
 
-const N    = IMAGES.length;
-const EASE = 'power4.out';
-const TRANSITION = `transform 0.38s cubic-bezier(0.22,1,0.36,1), box-shadow 0.38s cubic-bezier(0.22,1,0.36,1)`;
+const POOL_SIZE = 20;
+const SPAWN_DISTANCE = 90; // Pixels distance before spawning next image
 
-/* ═══════════════════════════════════════════════════════════════ */
 const HeroSection = () => {
   const sectionRef = useRef(null);
   const headingRef = useRef(null);
   const subtextRef = useRef(null);
+  const poolRefs = useRef([]);
 
-  /* Flat ref arrays — pre-allocated so refs are stable across renders */
-  const scrollRefs  = useRef(new Array(N).fill(null));
-  const cardRefs    = useRef(new Array(N).fill(null));   // card div (clip + hover)
-  const mouseRefs   = useRef(new Array(N).fill(null));   // mouse layer
-  const imgRefs     = useRef(new Array(N).fill(null));
+  // State refs for the requestAnimationFrame loop
+  const mouse = useRef({ x: 0, y: 0, isActive: false });
+  const smoothMouse = useRef({ x: 0, y: 0 });
+  const lastSpawn = useRef({ x: 0, y: 0 });
+  const currentIndex = useRef(0);
+  const imgIndex = useRef(0);
+  const globalZIndex = useRef(10);
+  const rafId = useRef(null);
 
-  const mouseTarget = useRef({ x: 0, y: 0 });
-  const mouseLerp   = useRef({ x: 0, y: 0 });
-  const raf         = useRef(null);
-
-  /* ── Entry animations ──────────────────────────────────────── */
+  /* ── Entry Animations ──────────────────────────────────────── */
   useEffect(() => {
     const ctx = gsap.context(() => {
-      /* Heading */
-      if (headingRef.current) {
-        gsap.from(headingRef.current, {
-          opacity: 0, y: 45, scale: 1.04,
-          duration: 1.8, ease: EASE, delay: 0.25,
-        });
-      }
-
-      /* Subtext */
-      if (subtextRef.current) {
-        gsap.from(subtextRef.current, {
-          opacity: 0, y: 18,
-          duration: 1.4, ease: EASE, delay: 0.70,
-        });
-      }
-
-      /* Per-image staggered reveal */
-      IMAGES.forEach((cfg, i) => {
-        const card = cardRefs.current[i];
-        const img  = imgRefs.current[i];
-        const wrapper = mouseRefs.current[i];
-        if (!card || !img || !wrapper) return;
-
-        const d = cfg.delay + 0.6;
-
-        /* Card container: animate y slightly for the pop-up feel */
-        gsap.from(card, {
-          y: 60, opacity: 0,
-          duration: 1.4, ease: EASE, delay: d
-        });
-
-        /* Image: masked reveal from bottom (yPercent: 100) and scale settle */
-        gsap.from(img, {
-          yPercent: 100, scale: 1.18,
-          duration: 1.6, ease: EASE, delay: d
-        });
+      // Main Heading reveal
+      gsap.from(headingRef.current, {
+        opacity: 0,
+        scale: 0.95,
+        y: 40,
+        duration: 2,
+        ease: 'expo.out',
+        delay: 0.3,
       });
-    }, sectionRef);
-    return () => ctx.revert();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
-  /* ── Scroll parallax ───────────────────────────────────────── */
-  useEffect(() => {
-    const ctx = gsap.context(() => {
-      IMAGES.forEach((cfg, i) => {
-        const el = scrollRefs.current[i];
-        if (!el) return;
-
-        gsap.to(el, {
-          y: cfg.speed,
-          ease: 'none',
-          scrollTrigger: {
-            trigger: sectionRef.current,
-            start: 'top top',
-            end: 'bottom top',
-            scrub: 1.4,
-          },
-        });
+      // Subtext reveal
+      gsap.from(subtextRef.current, {
+        opacity: 0,
+        y: 20,
+        duration: 1.5,
+        ease: 'expo.out',
+        delay: 0.8,
       });
     }, sectionRef);
 
     return () => ctx.revert();
   }, []);
 
-  /* ── Mouse parallax (lerped rAF) ───────────────────────────── */
+  /* ── Cinematic Image Trail Logic ───────────────────────────── */
   useEffect(() => {
     const section = sectionRef.current;
-    const lerp = (a, b, t) => a + (b - a) * t;
-    const SMOOTH = 0.055;
+    if (!section) return;
 
-    const onMove = (e) => {
-      const r = section.getBoundingClientRect();
-      mouseTarget.current.x = (e.clientX - r.left) / r.width  - 0.5;
-      mouseTarget.current.y = (e.clientY - r.top)  / r.height - 0.5;
+    // Initialize initial mouse position to center of section
+    const rect = section.getBoundingClientRect();
+    smoothMouse.current = { x: rect.width / 2, y: rect.height / 2 };
+    lastSpawn.current = { x: rect.width / 2, y: rect.height / 2 };
+
+    const lerp = (a, b, n) => (1 - n) * a + n * b;
+    const distance = (x1, y1, x2, y2) => Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
+
+    const onMouseMove = (e) => {
+      const bRect = section.getBoundingClientRect();
+      mouse.current.x = e.clientX - bRect.left;
+      mouse.current.y = e.clientY - bRect.top;
+      mouse.current.isActive = true;
     };
-    const onLeave = () => { mouseTarget.current.x = 0; mouseTarget.current.y = 0; };
 
-    const tick = () => {
-      mouseLerp.current.x = lerp(mouseLerp.current.x, mouseTarget.current.x, SMOOTH);
-      mouseLerp.current.y = lerp(mouseLerp.current.y, mouseTarget.current.y, SMOOTH);
+    const onMouseLeave = () => {
+      mouse.current.isActive = false;
+    };
 
-      mouseRefs.current.forEach((el, i) => {
-        if (!el) return;
-        const dx = (mouseLerp.current.x * IMAGES[i].mouseFactor * window.innerWidth).toFixed(2);
-        const dy = (mouseLerp.current.y * IMAGES[i].mouseFactor * window.innerHeight).toFixed(2);
-        el.style.transform = `translate3d(${dx}px,${dy}px,0)`;
+    const spawnImage = (x, y, velocityX, velocityY) => {
+      const el = poolRefs.current[currentIndex.current];
+      if (!el) return;
+
+      // Assign cinematic image and aspect ratio
+      const imgData = IMAGES[imgIndex.current];
+      const imgNode = el.querySelector('img');
+      imgNode.src = imgData.src;
+      el.style.aspectRatio = imgData.aspect;
+      
+      // Update cyclers
+      imgIndex.current = (imgIndex.current + 1) % IMAGES.length;
+
+      // Manage Z-Index stacking
+      el.style.zIndex = globalZIndex.current++;
+
+      // Randomize initial rotation for organic feel
+      const rot = Math.random() * 16 - 8; // -8deg to 8deg
+      
+      // Calculate smooth inertia target
+      const inertiaFactor = 0.8;
+      const targetX = x + velocityX * inertiaFactor;
+      const targetY = y + velocityY * inertiaFactor;
+
+      // Cancel any ongoing animations on this recycled element
+      gsap.killTweensOf(el);
+
+      // Set instantaneous spawn state
+      gsap.set(el, {
+        x: x - el.offsetWidth / 2,
+        y: y - el.offsetHeight / 2,
+        rotation: rot,
+        scale: 0.5,
+        opacity: 0,
       });
 
-      raf.current = requestAnimationFrame(tick);
+      // Phase 1: Reveal smoothly
+      gsap.to(el, {
+        opacity: 1,
+        scale: 1,
+        duration: 0.4,
+        ease: 'power2.out',
+      });
+
+      // Phase 2: Inertia drift
+      gsap.to(el, {
+        x: targetX - el.offsetWidth / 2,
+        y: targetY - el.offsetHeight / 2,
+        duration: 1.5,
+        ease: 'power3.out',
+      });
+
+      // Phase 3: Dissolve
+      gsap.to(el, {
+        opacity: 0,
+        scale: 0.85,
+        duration: 0.6,
+        delay: 0.7,
+        ease: 'power2.inOut',
+      });
+
+      // Advance pool pointer
+      currentIndex.current = (currentIndex.current + 1) % POOL_SIZE;
     };
 
-    section.addEventListener('mousemove',  onMove,  { passive: true });
-    section.addEventListener('mouseleave', onLeave, { passive: true });
-    raf.current = requestAnimationFrame(tick);
+    const tick = () => {
+      if (mouse.current.isActive) {
+        // Compute velocity for inertia
+        const prevX = smoothMouse.current.x;
+        const prevY = smoothMouse.current.y;
+
+        // Fluid lerping
+        smoothMouse.current.x = lerp(smoothMouse.current.x, mouse.current.x, 0.12);
+        smoothMouse.current.y = lerp(smoothMouse.current.y, mouse.current.y, 0.12);
+
+        const velocityX = smoothMouse.current.x - prevX;
+        const velocityY = smoothMouse.current.y - prevY;
+
+        const dist = distance(lastSpawn.current.x, lastSpawn.current.y, smoothMouse.current.x, smoothMouse.current.y);
+
+        if (dist > SPAWN_DISTANCE) {
+          // Multiply velocity by arbitrary factor for stronger visual inertia
+          spawnImage(smoothMouse.current.x, smoothMouse.current.y, velocityX * 5, velocityY * 5);
+          lastSpawn.current.x = smoothMouse.current.x;
+          lastSpawn.current.y = smoothMouse.current.y;
+        }
+      }
+
+      rafId.current = requestAnimationFrame(tick);
+    };
+
+    section.addEventListener('mousemove', onMouseMove);
+    section.addEventListener('mouseleave', onMouseLeave);
+    rafId.current = requestAnimationFrame(tick);
 
     return () => {
-      section.removeEventListener('mousemove',  onMove);
-      section.removeEventListener('mouseleave', onLeave);
-      cancelAnimationFrame(raf.current);
+      section.removeEventListener('mousemove', onMouseMove);
+      section.removeEventListener('mouseleave', onMouseLeave);
+      cancelAnimationFrame(rafId.current);
     };
   }, []);
 
-  /* ── Hover handlers (using GSAP to avoid CSS transition conflicts) ── */
-  const onEnter = (i, rot) => () => {
-    const card = cardRefs.current[i];
-    const img = imgRefs.current[i];
-    if (card) gsap.to(card, { scale: 1.08, boxShadow: '0 32px 80px rgba(0,0,0,0.68)', duration: 0.38, ease: 'power2.out', overwrite: 'auto' });
-    if (img) gsap.to(img, { scale: 1.06, duration: 0.5, ease: 'power2.out', overwrite: 'auto' });
-  };
-  const onLeave2 = (i, rot) => () => {
-    const card = cardRefs.current[i];
-    const img = imgRefs.current[i];
-    if (card) gsap.to(card, { scale: 1, boxShadow: '0 18px 52px rgba(0,0,0,0.48)', duration: 0.38, ease: 'power2.out', overwrite: 'auto' });
-    if (img) gsap.to(img, { scale: 1, duration: 0.5, ease: 'power2.out', overwrite: 'auto' });
-  };
-
-  /* ── Render ────────────────────────────────────────────────── */
   return (
     <section
       ref={sectionRef}
-      id="hero"
-      className="relative w-full overflow-hidden bg-[#111111]"
-      style={{ height: '100dvh' }}
+      className="relative w-full h-[100vh] bg-black overflow-hidden flex items-center justify-center cursor-crosshair"
     >
-
-      {IMAGES.map((cfg, i) => (
-        /* LAYER 1: Scroll — GSAP ScrollTrigger writes Y here */
-        <div
-          key={cfg.id}
-          ref={(el) => { scrollRefs.current[i] = el; }}
-          className="absolute"
-          style={{ ...cfg.style, zIndex: 5, willChange: 'transform' }}
-        >
-
-          {/* LAYER 2: Mouse — rAF lerp writes translate3d here */}
+      {/* --- Dynamic Image Pool --- */}
+      <div className="absolute inset-0 pointer-events-none z-[10]">
+        {Array.from({ length: POOL_SIZE }).map((_, i) => (
           <div
-            ref={(el) => { mouseRefs.current[i] = el; }}
-            style={{
-              width: '100%',
-              transform: 'translate3d(0,0,0)',
-              willChange: 'transform',
-            }}
+            key={i}
+            ref={(el) => (poolRefs.current[i] = el)}
+            className="absolute top-0 left-0 w-[clamp(140px,18vw,300px)] opacity-0 overflow-hidden bg-zinc-900"
+            style={{ willChange: 'transform, opacity' }}
           >
-
-            {/* CARD: Mask container + hover scale */}
-            <div
-              ref={(el) => { cardRefs.current[i] = el; }}
-              className="w-full overflow-hidden"
-              style={{
-                aspectRatio: cfg.aspect,
-                borderRadius: '3px',
-                transform: `rotate(${cfg.rot}deg)`,
-                boxShadow: '0 18px 52px rgba(0,0,0,0.48)',
-                willChange: 'transform, opacity',
-                cursor: 'pointer',
-              }}
-              onMouseEnter={onEnter(i, cfg.rot)}
-              onMouseLeave={onLeave2(i, cfg.rot)}
-            >
-              <img
-                ref={(el) => { imgRefs.current[i] = el; }}
-                src={cfg.src}
-                alt={cfg.alt}
-                loading="eager"
-                decoding="async"
-                draggable={false}
-                className="w-full h-full object-cover block select-none"
-                style={{
-                  transformOrigin: 'center',
-                  willChange: 'transform',
-                  transition: `transform 0.5s cubic-bezier(0.22,1,0.36,1)`,
-                }}
-                onMouseEnter={(e) => { e.currentTarget.style.transform = 'scale(1.06)'; }}
-                onMouseLeave={(e) => { e.currentTarget.style.transform = 'scale(1.0)'; }}
-              />
-            </div>
-
+            <img
+              src=""
+              alt=""
+              className="w-full h-full object-cover select-none"
+            />
           </div>
-        </div>
-      ))}
+        ))}
+      </div>
 
-      {/* ── Center text ──────────────────────────────────────── */}
-      <div className="absolute inset-0 flex flex-col items-center justify-center z-10 pointer-events-none px-6 select-none">
+      {/* --- Center Text --- */}
+      <div className="relative z-[1000] pointer-events-none select-none text-center">
         <h1
           ref={headingRef}
-          className="text-center font-black tracking-tighter leading-none"
-          style={{
-            fontSize: 'clamp(64px, 16vw, 200px)',
-            willChange: 'transform, opacity',
-            background: 'linear-gradient(160deg, #ffffff 52%, rgba(255,255,255,0.38) 100%)',
-            WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent',
-            backgroundClip: 'text',
-          }}
+          className="text-[clamp(60px,15vw,220px)] font-black tracking-tighter leading-none text-white mix-blend-difference"
         >
           Parth Panchal
         </h1>
-
         <p
           ref={subtextRef}
-          className="mt-5 text-center uppercase font-semibold tracking-[0.22em]"
-          style={{
-            fontSize: 'clamp(8px, 0.9vw, 11px)',
-            color: 'rgba(255,255,255,0.35)',
-            willChange: 'transform, opacity',
-          }}
+          className="mt-6 text-[clamp(8px,1vw,12px)] uppercase tracking-[0.4em] font-bold text-white/40"
         >
-          Video Editor&nbsp;&middot;&nbsp;Cinematic Storytelling&nbsp;&middot;&nbsp;Based Worldwide
+          Cinematic Storytelling through Precision Editing
         </p>
       </div>
 
-      {/* ── Edge vignette ────────────────────────────────────── */}
-      <div
-        aria-hidden="true"
-        className="absolute inset-0 pointer-events-none"
-        style={{
-          zIndex: 6,
-          background:
-            'radial-gradient(ellipse 65% 65% at 50% 50%, transparent 25%, rgba(17,17,17,0.50) 100%)',
-        }}
-      />
+      {/* --- Corner UI --- */}
+      <div className="absolute inset-0 z-[2000] pointer-events-none p-10 flex flex-col justify-between mix-blend-difference text-[10px] tracking-[0.2em] font-bold uppercase text-white/70">
+        <div className="flex justify-between items-start">
+          <div className="flex flex-col gap-1">
+            <span>Parth Panchal</span>
+            <span className="text-white/30">Video Editor</span>
+          </div>
+          <div className="flex gap-10">
+            <a href="#work" className="pointer-events-auto hover:text-white transition-colors">Work</a>
+            <a href="#about" className="pointer-events-auto hover:text-white transition-colors">About</a>
+            <a href="#contact" className="pointer-events-auto hover:text-white transition-colors">Contact</a>
+          </div>
+        </div>
+        <div className="flex justify-between items-end">
+          <span>Based Worldwide</span>
+          <span>©2026</span>
+        </div>
+      </div>
 
+      {/* --- Vignette --- */}
+      <div className="absolute inset-0 pointer-events-none z-[500] bg-[radial-gradient(circle_at_center,transparent_0%,rgba(0,0,0,0.4)_100%)]" />
     </section>
   );
 };
