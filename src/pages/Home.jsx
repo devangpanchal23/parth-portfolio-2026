@@ -5,6 +5,8 @@ import Lenis from '@studio-freight/lenis';
 import HeroSection from '../components/HeroSection';
 import { Footer } from '../components/Footer';
 import ImageWithCursor from '../components/ImageWithCursor';
+import FeaturedProject from '../components/FeaturedProject';
+import { projectsData } from '../data';
 
 export const Home = ({ setIsImageHovered }) => {
   const navigate = useNavigate();
@@ -167,6 +169,33 @@ export const Home = ({ setIsImageHovered }) => {
             </button>
           </div>
         </div>
+      </section>
+
+      {/* --- PREMIUM SHOWCASE SECTION --- */}
+      <section className="w-full bg-[#050505]">
+        <div className="w-full max-w-[1500px] mx-auto px-6 md:px-12 pt-24">
+          <h2 className="font-display text-4xl md:text-5xl lg:text-7xl font-semibold tracking-[-1px] mb-8 lowercase text-white">
+            premium showcases.
+          </h2>
+        </div>
+
+        <FeaturedProject 
+          project={projectsData["midnight-drive"]} 
+          slug="midnight-drive" 
+          reverse={false}
+          btn1Text="Watch Project"
+          btn2Text="Behind The Scenes"
+          setIsImageHovered={setIsImageHovered}
+        />
+
+        <FeaturedProject 
+          project={projectsData["echo-frames"]} 
+          slug="echo-frames" 
+          reverse={true}
+          btn1Text="Watch Project"
+          btn2Text="View Breakdown"
+          setIsImageHovered={setIsImageHovered}
+        />
       </section>
 
       {/* --- ABOUT SECTION --- */}

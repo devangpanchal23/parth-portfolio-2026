@@ -70,6 +70,31 @@ export const ProjectDetail = ({ setIsImageHovered }) => {
             <h4 className="font-sans text-[8px] md:text-[9px] text-[#666] tracking-[0.15em] uppercase font-bold">Deliverables</h4>
             <p className="font-sans text-[10px] md:text-[11px] text-[#eee] tracking-[0.1em] uppercase font-bold">{project.deliverables}</p>
           </div>
+
+          {project.software && (
+            <div className="flex flex-col gap-1.5 col-span-2 mt-4">
+              <h4 className="font-sans text-[8px] md:text-[9px] text-[#666] tracking-[0.15em] uppercase font-bold">Software</h4>
+              <div className="flex flex-wrap gap-2 mt-1">
+                {project.software.map((s, i) => (
+                  <span key={i} className="text-[10px] md:text-[11px] text-white/80 bg-white/5 px-2 py-1 rounded border border-white/10 uppercase tracking-wider font-bold">{s}</span>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {project.highlights && (
+            <div className="flex flex-col gap-1.5 col-span-2 mt-4">
+              <h4 className="font-sans text-[8px] md:text-[9px] text-[#666] tracking-[0.15em] uppercase font-bold">Highlights</h4>
+              <ul className="grid grid-cols-1 md:grid-cols-2 gap-2 mt-1">
+                {project.highlights.map((h, i) => (
+                  <li key={i} className="text-[10px] md:text-[11px] text-white/70 flex items-center gap-2 uppercase tracking-tight font-medium">
+                    <span className="w-1 h-1 bg-purple-500 rounded-full" />
+                    {h}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
         </motion.div>
       </section>
 
@@ -178,18 +203,36 @@ export const ProjectDetail = ({ setIsImageHovered }) => {
               {section.type === 'grid' && (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
                   <motion.div
-                    className="w-full overflow-hidden aspect-[4/5] bg-[#1a1a1a] rounded-[4px] cursor-hover"
+                    className={`w-full overflow-hidden ${section.aspect || 'aspect-[4/5]'} bg-[#1a1a1a] rounded-[4px] cursor-hover`}
                     initial={{ opacity: 0, y: 50 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-100px" }} transition={{ duration: 0.8 }}
                     onMouseEnter={() => setIsImageHovered && setIsImageHovered(true)} onMouseLeave={() => setIsImageHovered && setIsImageHovered(false)}
                   >
-                    <img src={section.src1} className="w-full h-full object-cover" loading="lazy" alt="Project Shot" />
+                    {section.isVideo ? (
+                      <VideoPlayer 
+                        videoSrc={section.src1} 
+                        posterImage={section.poster1} 
+                        className="w-full h-full"
+                        autoPlay={false}
+                      />
+                    ) : (
+                      <img src={section.src1} className="w-full h-full object-cover" loading="lazy" alt="Project Shot" />
+                    )}
                   </motion.div>
                   <motion.div
-                    className="w-full overflow-hidden aspect-[4/5] bg-[#1a1a1a] rounded-[4px] cursor-hover"
+                    className={`w-full overflow-hidden ${section.aspect || 'aspect-[4/5]'} bg-[#1a1a1a] rounded-[4px] cursor-hover`}
                     initial={{ opacity: 0, y: 50 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-100px" }} transition={{ duration: 0.8, delay: 0.2 }}
                     onMouseEnter={() => setIsImageHovered && setIsImageHovered(true)} onMouseLeave={() => setIsImageHovered && setIsImageHovered(false)}
                   >
-                    <img src={section.src2} className="w-full h-full object-cover" loading="lazy" alt="Project Shot" />
+                    {section.isVideo ? (
+                      <VideoPlayer 
+                        videoSrc={section.src2} 
+                        posterImage={section.poster2} 
+                        className="w-full h-full"
+                        autoPlay={false}
+                      />
+                    ) : (
+                      <img src={section.src2} className="w-full h-full object-cover" loading="lazy" alt="Project Shot" />
+                    )}
                   </motion.div>
                 </div>
               )}

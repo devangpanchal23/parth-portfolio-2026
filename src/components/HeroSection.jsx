@@ -19,6 +19,7 @@ const HeroSection = () => {
   const headingRef = useRef(null);
   const subtextRef = useRef(null);
   const poolRefs = useRef([]);
+  const navRef = useRef(null);
 
   // State refs for the requestAnimationFrame loop
   const mouse = useRef({ x: 0, y: 0, isActive: false });
@@ -32,15 +33,28 @@ const HeroSection = () => {
   /* ── Entry Animations ──────────────────────────────────────── */
   useEffect(() => {
     const ctx = gsap.context(() => {
-      // Main Heading reveal
-      gsap.from(headingRef.current, {
-        opacity: 0,
-        scale: 0.95,
-        y: 40,
-        duration: 2,
-        ease: 'expo.out',
-        delay: 0.3,
-      });
+      // Main Heading reveal (Pulse: 1 -> 1.08 -> 1)
+      const headingTl = gsap.timeline({ delay: 0.4 });
+      headingTl.fromTo(headingRef.current, 
+        { opacity: 0, scale: 1, y: 30 }, 
+        { opacity: 1, y: 0, duration: 1.2, ease: 'power3.out' }
+      )
+      .to(headingRef.current, { scale: 1.08, duration: 0.6, ease: 'power2.out' }, 0.2)
+      .to(headingRef.current, { scale: 1, duration: 0.8, ease: 'power2.inOut' });
+
+      // Navigation reveal (Staggered Pulse: 1 -> 1.08 -> 1)
+      if (navRef.current) {
+        const navItems = navRef.current.querySelectorAll('.nav-anim-item');
+        navItems.forEach((item, i) => {
+          const itemTl = gsap.timeline({ delay: 0.8 + i * 0.1 });
+          itemTl.fromTo(item, 
+            { opacity: 0, scale: 1, y: -10 }, 
+            { opacity: 1, y: 0, duration: 0.8, ease: 'power2.out' }
+          )
+          .to(item, { scale: 1.08, duration: 0.4, ease: 'power2.out' }, 0.2)
+          .to(item, { scale: 1, duration: 0.6, ease: 'power2.inOut' });
+        });
+      }
 
       // Subtext reveal
       gsap.from(subtextRef.current, {
@@ -48,7 +62,7 @@ const HeroSection = () => {
         y: 20,
         duration: 1.5,
         ease: 'expo.out',
-        delay: 0.8,
+        delay: 1.4,
       });
     }, sectionRef);
 
@@ -225,22 +239,25 @@ const HeroSection = () => {
       </div>
 
       {/* --- Top Navigation UI --- */}
-      <div className="absolute top-0 left-0 w-full z-[2000] pointer-events-none p-6 md:p-10 flex justify-between items-start mix-blend-difference text-xs md:text-sm tracking-widest font-medium uppercase text-gray-200">
+      <div 
+        ref={navRef}
+        className="absolute top-0 left-0 w-full z-[2000] pointer-events-none p-6 md:p-10 flex justify-between items-start mix-blend-difference text-xs md:text-sm tracking-widest font-medium uppercase text-gray-200"
+      >
         {/* LEFT */}
-        <div className="flex flex-col gap-1 w-[30%] text-left">
+        <div className="flex flex-col gap-1 w-[30%] text-left nav-anim-item">
           <span className="text-white">PARTH PANCHAL</span>
           <span className="text-white/40">VIDEO EDITOR</span>
         </div>
         
         {/* CENTER */}
         <div className="flex justify-center gap-8 md:gap-12 w-[40%] text-white pointer-events-auto">
-          <a href="#work" className="hover:text-white transition-colors duration-300">WORK</a>
-          <a href="#about" className="hover:text-white transition-colors duration-300">ABOUT</a>
-          <a href="#contact" className="hover:text-white transition-colors duration-300">CONTACT</a>
+          <a href="#work" className="hover:text-white transition-colors duration-300 nav-anim-item">WORK</a>
+          <a href="#about" className="hover:text-white transition-colors duration-300 nav-anim-item">ABOUT</a>
+          <a href="#contact" className="hover:text-white transition-colors duration-300 nav-anim-item">CONTACT</a>
         </div>
 
         {/* RIGHT */}
-        <div className="w-[30%] text-right text-white">
+        <div className="w-[30%] text-right text-white nav-anim-item">
           <span>©2026</span>
         </div>
       </div>

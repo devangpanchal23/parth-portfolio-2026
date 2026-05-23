@@ -79,7 +79,7 @@ export const HeroImageSequence = () => {
     // Flow sequence loops infinitely across the stack every ~900ms pushing nodes logically backward into queue
     const loopInterval = setInterval(() => {
       globalIndex.current++;
-    }, 1000); 
+    }, 1500); 
 
     const frameLoop = () => {
       if (!isMobile.current && mouseRaw.current.x !== -1000) {
@@ -89,7 +89,7 @@ export const HeroImageSequence = () => {
         masterSmooth.current.y += (mouseRaw.current.y - masterSmooth.current.y) * 0.08;
 
         const time = Date.now() * 0.001;
-        const activeLayers = isMobile.current ? 3 : 5;
+        const activeLayers = isMobile.current ? 2 : 3;
         const intensity = isMobile.current ? 0.3 : 1; // Performance & visuals toned down for mobile hardware
 
         for (let i = 0; i < 15; i++) {
@@ -108,10 +108,8 @@ export const HeroImageSequence = () => {
           if (d < activeLayers) {
             // Newest active image naturally blooms in -> (0.95 -> 1.0)
             if (d === 0) { targetOpacity = 0.95; targetScale = 1.0; targetBlur = 0; } 
-            else if (d === 1) { targetOpacity = 0.70; targetScale = 0.99; targetBlur = 0; } 
-            else if (d === 2) { targetOpacity = 0.50; targetScale = 0.98; targetBlur = 2; }
-            else if (d === 3) { targetOpacity = 0.35; targetScale = 0.97; targetBlur = 4; }
-            else if (d === 4) { targetOpacity = 0.15; targetScale = 0.96; targetBlur = 6; }
+            else if (d === 1) { targetOpacity = 0.60; targetScale = 0.99; targetBlur = 1; } 
+            else if (d === 2) { targetOpacity = 0.25; targetScale = 0.98; targetBlur = 3; }
           }
 
           // Generate dynamic floating (breathing) effect directly satisfying "floating motion even when cursor stops"

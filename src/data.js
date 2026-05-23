@@ -1,3 +1,10 @@
+import img1Before from "./media/img-1-before.png";
+import img1After from "./media/img-1-after.png";
+import img2Before from "./media/img-2-before.png";
+import img2After from "./media/img-2-after.png";
+import img3Before from "./media/img-3-before.png";
+import img3After from "./media/img-3-after.png";
+
 export const projectsData = {
   "canada-goose": {
     title: "Canada Goose: Heritage & Craftsmanship",
@@ -9,9 +16,8 @@ export const projectsData = {
     heroImage: "https://images.unsplash.com/photo-1601004890684-d8cbf643f5f2?w=1600&q=80",
     sections: [
       { type: "full", src: "https://images.unsplash.com/photo-1542204165-65bf26472b9b?w=2000&q=80" },
-      { type: "compare", before: "https://images.unsplash.com/photo-1601004890684-d8cbf643f5f2?w=1600&q=80&sat=-50&con=-30", after: "https://images.unsplash.com/photo-1601004890684-d8cbf643f5f2?w=1600&q=80&sat=20&con=20", aspect: "aspect-[16/9]" },
+      { type: "compare", before: img1Before, after: img1After, aspect: "aspect-[16/9]" },
       { type: "youtube", src: "https://www.youtube.com/embed/Jcj6kJvc_Vw" },
-      { type: "grid", src1: "https://images.unsplash.com/photo-1558507652-2d9626c15112?w=1000&q=80", src2: "https://images.unsplash.com/photo-1587329310686-91414b8e3cb7?w=1000&q=80" }
     ],
     nextSlug: "pepsi-generation",
     nextTitle: "Pepsi: The New Generation"
@@ -41,7 +47,7 @@ export const projectsData = {
     description: "Gritty, powerful, and intense. A sports commercial focusing on pushing limits and breaking barriers.",
     heroImage: "https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?w=1600&q=80",
     sections: [
-      { type: "compare", before: "https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?w=1600&q=80&sat=-10&con=-20", after: "https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?w=1600&q=80&sat=10&con=30", aspect: "aspect-[16/9]" },
+      { type: "compare", before: img2Before, after: img2After, aspect: "aspect-[16/9]" },
       { type: "video", src: "https://videos.pexels.com/video-files/3206020/3206020-uhd_2560_1440_25fps.mp4", poster: "https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?w=1600&q=80" },
       { type: "full", src: "https://images.unsplash.com/photo-1542204165-65bf26472b9b?w=2000&q=80" },
     ],
@@ -60,7 +66,6 @@ export const projectsData = {
       { type: "full", src: "https://images.unsplash.com/photo-1587329310686-91414b8e3cb7?w=2000&q=80" },
       { type: "compare", before: "https://images.unsplash.com/photo-1587329310686-91414b8e3cb7?w=1600&q=80&sat=-40&con=-10", after: "https://images.unsplash.com/photo-1587329310686-91414b8e3cb7?w=1600&q=80&sat=30&con=20", aspect: "aspect-video" },
       { type: "video", src: "https://videos.pexels.com/video-files/853889/853889-hd_1920_1080_25fps.mp4", poster: "https://images.unsplash.com/photo-1587329310686-91414b8e3cb7?w=2000&q=80" },
-      { type: "grid", src1: "https://images.unsplash.com/photo-1558507652-2d9626c15112?w=1000&q=80", src2: "https://images.unsplash.com/photo-1601004890684-d8cbf643f5f2?w=1000&q=80" }
     ],
     nextSlug: "project-rock",
     nextTitle: "Under Armour x Project Rock"
@@ -74,7 +79,42 @@ export const projectsData = {
     description: "A surreal indie narrative film exploring human connection through beautiful cinematic sequences.",
     heroImage: "https://images.unsplash.com/photo-1542204165-65bf26472b9b?w=2000&q=80",
     sections: [
-      { type: "compare", before: "https://images.unsplash.com/photo-1542204165-65bf26472b9b?w=2000&q=80&sat=-60", after: "https://images.unsplash.com/photo-1542204165-65bf26472b9b?w=2000&q=80&sat=30", aspect: "aspect-[24/9]" }
+      { type: "compare", before: img3Before, after: img3After, aspect: "aspect-[24/9]" },
+      { type: "video", src: "https://videos.pexels.com/video-files/5199624/5199624-uhd_3840_2160_24fps.mp4", poster: "https://images.unsplash.com/photo-1542204165-65bf26472b9b?w=2000&q=80" }
+    ],
+    nextSlug: "midnight-drive",
+    nextTitle: "Midnight Drive"
+  },
+  "midnight-drive": {
+    title: "Midnight Drive",
+    client: "Luxury Automotive",
+    year: "2024",
+    role: "Video Editor / Motion Graphics",
+    deliverables: "Cinematic Commercial Edit",
+    description: "A fast-paced cinematic commercial edit focused on luxury automotive visuals, dramatic transitions, speed ramping, motion blur effects, and high-energy sound synchronization. Designed to create a premium advertisement-style viewing experience with smooth storytelling and intense visual pacing.",
+    heroImage: "https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?w=1600&q=80",
+    software: ["Adobe Premiere Pro", "After Effects", "DaVinci Resolve"],
+    highlights: ["Cinematic color grading", "Speed ramp transitions", "Motion blur effects", "Beat-synced editing", "Smooth text animations", "High-end commercial pacing"],
+    sections: [
+      { type: "video", src: "https://videos.pexels.com/video-files/3206020/3206020-uhd_2560_1440_25fps.mp4", poster: "https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?w=1600&q=80" },
+      { type: "full", src: "https://images.unsplash.com/photo-1622483767028-3f66f32aef97?w=2000&q=80" },
+    ],
+    nextSlug: "echo-frames",
+    nextTitle: "Echo Frames"
+  },
+  "echo-frames": {
+    title: "Echo Frames",
+    client: "Music Artist",
+    year: "2024",
+    role: "Editor / VFX Artist",
+    deliverables: "Music Video Editing",
+    description: "A stylish music video editing project focused on rhythm-based cuts, cinematic storytelling, glowing visual effects, smooth transitions, and immersive scene blending. The edit should feel emotionally engaging with a modern creative direction and polished visual atmosphere.",
+    heroImage: "https://images.unsplash.com/photo-1542204165-65bf26472b9b?w=2000&q=80",
+    software: ["After Effects", "Premiere Pro", "Blender"],
+    highlights: ["Beat-synced transitions", "Glow & light effects", "Cinematic storytelling", "Smooth scene blending", "Creative motion graphics", "Professional color correction"],
+    sections: [
+      { type: "video", src: "https://videos.pexels.com/video-files/5199624/5199624-uhd_3840_2160_24fps.mp4", poster: "https://images.unsplash.com/photo-1542204165-65bf26472b9b?w=2000&q=80" },
+      { type: "full", src: "https://images.unsplash.com/photo-1587329310686-91414b8e3cb7?w=2000&q=80" },
     ],
     nextSlug: "canada-goose",
     nextTitle: "Canada Goose: Heritage & Craftsmanship"
