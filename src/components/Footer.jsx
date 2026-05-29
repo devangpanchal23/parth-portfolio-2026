@@ -48,7 +48,6 @@ export const Footer = () => {
               viewport={{ once: true }}
               transition={{ duration: 0.8, delay: 0.4 }}
             >
-              <p className="text-[10px] md:text-[11px] text-[#A1A1A1] uppercase tracking-widest font-semibold">Surat</p>
               <p className="text-[10px] md:text-[11px] text-[#A1A1A1] uppercase tracking-widest font-semibold">India</p>
             </motion.div>
             <motion.div

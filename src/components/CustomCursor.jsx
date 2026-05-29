@@ -11,8 +11,8 @@ const CustomCursor = () => {
       aria-hidden
       className="fixed top-0 left-0 rounded-full pointer-events-none z-[100] opacity-0 transition-opacity duration-300 ease-out"
       style={{
-        width: 'var(--cursor-size, 100px)',
-        height: 'var(--cursor-size, 100px)',
+        width: 'var(--cursor-size, 80px)',
+        height: 'var(--cursor-size, 80px)',
         // Glassmorphism effect
         background: 'rgba(255, 255, 255, 0.04)',
         backdropFilter: 'blur(10px)',

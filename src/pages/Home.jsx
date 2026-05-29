@@ -1,46 +1,27 @@
 import React, { useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import Lenis from '@studio-freight/lenis';
 import HeroSection from '../components/HeroSection';
 import { Footer } from '../components/Footer';
 import ImageWithCursor from '../components/ImageWithCursor';
-import FeaturedProject from '../components/FeaturedProject';
-import { projectsData } from '../data';
+import { Skeleton } from 'boneyard-js/react';
 
-export const Home = ({ setIsImageHovered }) => {
+export const Home = ({ setIsImageHovered, isPreloaderDone }) => {
   const navigate = useNavigate();
+  const [isLoading, setIsLoading] = React.useState(true);
 
-  // Initialize Lenis for smooth scrolling
   useEffect(() => {
-    const lenis = new Lenis({
-      duration: 1.2,
-      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-      orientation: 'vertical',
-      gestureOrientation: 'vertical',
-      smoothWheel: true,
-      wheelMultiplier: 1,
-      smoothTouch: false,
-      touchMultiplier: 2,
-      infinite: false,
-    });
-
-    function raf(time) {
-      lenis.raf(time);
-      requestAnimationFrame(raf);
+    if (isPreloaderDone) {
+      const timer = setTimeout(() => setIsLoading(false), 800);
+      return () => clearTimeout(timer);
     }
+  }, [isPreloaderDone]);
 
-    requestAnimationFrame(raf);
-
-    return () => {
-      lenis.destroy();
-    };
-  }, []);
 
   return (
     <div className="w-full relative bg-black">
       {/* --- HERO SECTION --- */}
-      <HeroSection />
+      <HeroSection isPreloaderDone={isPreloaderDone} />
 
       {/* --- SELECTED WORK SECTION --- */}
       <section id="work" className="w-full py-24 mt-12 border-t border-[#222]">
@@ -52,12 +33,13 @@ export const Home = ({ setIsImageHovered }) => {
           {/* FIRST ROW */}
           <div className="flex flex-col md:flex-row gap-8 lg:gap-12 w-full">
             {/* Canada Goose */}
+            <Skeleton name="home-work-canada" loading={isLoading} className="w-full md:w-[40%]">
             <motion.div
-              className="w-full md:w-[40%] flex flex-col gap-4 group"
-              initial={{ opacity: 0, y: 50 }} 
-              whileInView={{ opacity: 1, y: 0 }} 
+              className="w-full flex flex-col gap-4 group"
+              initial={{ opacity: 0, y: 60, filter: "blur(10px)" }} 
+              whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }} 
               viewport={{ once: true, margin: "-100px" }} 
-              transition={{ duration: 0.8 }}
+              transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
             >
               <ImageWithCursor 
                 className="w-full overflow-hidden aspect-video bg-[#1a1a1a] cursor-hover relative"
@@ -77,14 +59,16 @@ export const Home = ({ setIsImageHovered }) => {
                 <p className="font-sans text-[10px] text-[#888] tracking-widest uppercase font-semibold">Editorial / Film</p>
               </div>
             </motion.div>
+            </Skeleton>
 
             {/* Pepsi */}
+            <Skeleton name="home-work-pepsi" loading={isLoading} className="w-full md:w-[60%]">
             <motion.div
-              className="w-full md:w-[60%] flex flex-col gap-4 group"
-              initial={{ opacity: 0, y: 50 }} 
-              whileInView={{ opacity: 1, y: 0 }} 
+              className="w-full flex flex-col gap-4 group"
+              initial={{ opacity: 0, y: 60, filter: "blur(10px)" }} 
+              whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }} 
               viewport={{ once: true, margin: "-100px" }} 
-              transition={{ duration: 0.8, delay: 0.2 }}
+              transition={{ duration: 1, ease: [0.16, 1, 0.3, 1], delay: 0.15 }}
             >
               <ImageWithCursor 
                 className="w-full overflow-hidden aspect-[4/3] bg-[#1a1a1a] cursor-hover relative"
@@ -104,17 +88,19 @@ export const Home = ({ setIsImageHovered }) => {
                 <p className="font-sans text-[10px] text-[#888] tracking-widest uppercase font-semibold">Commercial / Colour</p>
               </div>
             </motion.div>
+            </Skeleton>
           </div>
 
           {/* SECOND ROW */}
           <div className="flex flex-col md:flex-row gap-8 lg:gap-12 w-full mt-12 md:mt-24">
             {/* Under Armour */}
+            <Skeleton name="home-work-underarmour" loading={isLoading} className="w-full md:w-[65%]">
             <motion.div
-              className="w-full md:w-[65%] flex flex-col gap-4 group"
-              initial={{ opacity: 0, y: 50 }} 
-              whileInView={{ opacity: 1, y: 0 }} 
+              className="w-full flex flex-col gap-4 group"
+              initial={{ opacity: 0, y: 60, filter: "blur(10px)" }} 
+              whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }} 
               viewport={{ once: true, margin: "-100px" }} 
-              transition={{ duration: 0.8 }}
+              transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
             >
               <ImageWithCursor 
                 className="w-full overflow-hidden aspect-[16/10] bg-[#1a1a1a] relative cursor-hover"
@@ -134,14 +120,16 @@ export const Home = ({ setIsImageHovered }) => {
                 <p className="font-sans text-[10px] text-[#888] tracking-widest uppercase font-semibold">Sport / Cinematic</p>
               </div>
             </motion.div>
+            </Skeleton>
 
             {/* EA FC 25 */}
+            <Skeleton name="home-work-eafc" loading={isLoading} className="w-full md:w-[35%]">
             <motion.div
-              className="w-full md:w-[35%] flex flex-col gap-4 group"
-              initial={{ opacity: 0, y: 50 }} 
-              whileInView={{ opacity: 1, y: 0 }} 
+              className="w-full flex flex-col gap-4 group"
+              initial={{ opacity: 0, y: 60, filter: "blur(10px)" }} 
+              whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }} 
               viewport={{ once: true, margin: "-100px" }} 
-              transition={{ duration: 0.8, delay: 0.2 }}
+              transition={{ duration: 1, ease: [0.16, 1, 0.3, 1], delay: 0.15 }}
             >
               <ImageWithCursor 
                 className="w-full overflow-hidden aspect-video bg-[#1a1a1a] cursor-hover relative"
@@ -161,6 +149,7 @@ export const Home = ({ setIsImageHovered }) => {
                 <p className="font-sans text-[10px] text-[#888] tracking-widest uppercase font-semibold">Gaming / Motion</p>
               </div>
             </motion.div>
+            </Skeleton>
           </div>
 
           <div className="w-full flex justify-center mt-20 md:mt-32 pb-4">
@@ -171,42 +160,16 @@ export const Home = ({ setIsImageHovered }) => {
         </div>
       </section>
 
-      {/* --- PREMIUM SHOWCASE SECTION --- */}
-      <section className="w-full bg-[#050505]">
-        <div className="w-full max-w-[1500px] mx-auto px-6 md:px-12 pt-24">
-          <h2 className="font-display text-4xl md:text-5xl lg:text-7xl font-semibold tracking-[-1px] mb-8 lowercase text-white">
-            premium showcases.
-          </h2>
-        </div>
-
-        <FeaturedProject 
-          project={projectsData["midnight-drive"]} 
-          slug="midnight-drive" 
-          reverse={false}
-          btn1Text="Watch Project"
-          btn2Text="Behind The Scenes"
-          setIsImageHovered={setIsImageHovered}
-        />
-
-        <FeaturedProject 
-          project={projectsData["echo-frames"]} 
-          slug="echo-frames" 
-          reverse={true}
-          btn1Text="Watch Project"
-          btn2Text="View Breakdown"
-          setIsImageHovered={setIsImageHovered}
-        />
-      </section>
 
       {/* --- ABOUT SECTION --- */}
       <section id="about" className="w-full py-24 mt-12 md:mt-20 border-t border-[#222]">
         <div className="w-full max-w-[1500px] mx-auto px-6 md:px-12 flex flex-col md:flex-row gap-16 md:gap-24 lg:gap-32 items-start justify-between">
           <motion.div 
             className="w-full md:w-1/2 flex flex-col gap-10" 
-            initial={{ opacity: 0, x: -50 }} 
-            whileInView={{ opacity: 1, x: 0 }} 
+            initial={{ opacity: 0, x: -50, filter: "blur(10px)" }} 
+            whileInView={{ opacity: 1, x: 0, filter: "blur(0px)" }} 
             viewport={{ once: true, margin: "-100px" }} 
-            transition={{ duration: 1, ease: "easeOut" }}
+            transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
           >
             <h2 className="font-display text-6xl md:text-[90px] lg:text-[110px] font-semibold leading-[0.95] tracking-[-2px] text-white">
               Hi there,<br />I’m Parth
@@ -217,13 +180,14 @@ export const Home = ({ setIsImageHovered }) => {
           </motion.div>
           <motion.div 
             className="w-full md:w-1/2 flex justify-start md:justify-end" 
-            initial={{ opacity: 0, x: 50 }} 
-            whileInView={{ opacity: 1, x: 0 }} 
+            initial={{ opacity: 0, x: 50, filter: "blur(10px)" }} 
+            whileInView={{ opacity: 1, x: 0, filter: "blur(0px)" }} 
             viewport={{ once: true, margin: "-100px" }} 
-            transition={{ duration: 1, ease: "easeOut", delay: 0.2 }}
+            transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1], delay: 0.15 }}
           >
+            <Skeleton name="home-about-image" loading={isLoading} className="w-full md:w-[90%] lg:w-[700px]">
             <ImageWithCursor 
-              className="w-full md:w-[90%] lg:w-[700px] overflow-hidden bg-[#1a1a1a] cursor-hover rounded-[2px]" 
+              className="w-full overflow-hidden bg-[#1a1a1a] cursor-hover rounded-[2px]" 
               onMouseEnter={() => setIsImageHovered && setIsImageHovered(true)} 
               onMouseLeave={() => setIsImageHovered && setIsImageHovered(false)}
             >
@@ -233,6 +197,7 @@ export const Home = ({ setIsImageHovered }) => {
                 className="w-full h-auto aspect-[3/4] object-cover grayscale opacity-90 hover:grayscale-0 hover:opacity-100 hover:scale-105 transition-all duration-700 ease-out" 
               />
             </ImageWithCursor>
+            </Skeleton>
           </motion.div>
         </div>
       </section>

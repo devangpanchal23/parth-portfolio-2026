@@ -67,3 +67,11 @@ body {
   }
 }
 */
+
+/* GPU acceleration for high-performance fluid renders at 60/120fps */
+.will-change-gpu {
+  will-change: transform, opacity;
+  transform: translate3d(0, 0, 0);
+  backface-visibility: hidden;
+  perspective: 1000px;
+}

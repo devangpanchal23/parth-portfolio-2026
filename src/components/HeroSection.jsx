@@ -12,14 +12,15 @@ const IMAGES = [
 ];
 
 const POOL_SIZE = 20;
-const SPAWN_DISTANCE = 90; // Pixels distance before spawning next image
+const SPAWN_DISTANCE = 160; // Pixels distance before spawning next image (increased from 90 to reduce frequency)
 
-const HeroSection = () => {
+const HeroSection = ({ isPreloaderDone = true }) => {
   const sectionRef = useRef(null);
   const headingRef = useRef(null);
   const subtextRef = useRef(null);
   const poolRefs = useRef([]);
   const navRef = useRef(null);
+  const heroCursorRef = useRef(null);
 
   // State refs for the requestAnimationFrame loop
   const mouse = useRef({ x: 0, y: 0, isActive: false });
@@ -32,15 +33,46 @@ const HeroSection = () => {
 
   /* ── Entry Animations ──────────────────────────────────────── */
   useEffect(() => {
+    if (!isPreloaderDone) {
+      gsap.set([headingRef.current, subtextRef.current], { opacity: 0 });
+      if (navRef.current) {
+        gsap.set(navRef.current.querySelectorAll('.nav-anim-item'), { opacity: 0 });
+      }
+      return;
+    }
+
     const ctx = gsap.context(() => {
-      // Main Heading reveal (Pulse: 1 -> 1.08 -> 1)
-      const headingTl = gsap.timeline({ delay: 0.4 });
-      headingTl.fromTo(headingRef.current, 
-        { opacity: 0, scale: 1, y: 30 }, 
-        { opacity: 1, y: 0, duration: 1.2, ease: 'power3.out' }
+      // Main Heading reveal - Progressive Character Reveal with Cinematic Blur
+      const headingTl = gsap.timeline({ delay: 0.1 });
+      
+      // Instantly make container visible so we can reveal individual characters
+      gsap.set(headingRef.current, { opacity: 1, y: 0, scale: 1 });
+      
+      const chars = headingRef.current.querySelectorAll('.char-item');
+      
+      headingTl.fromTo(chars, 
+        { 
+          opacity: 0, 
+          y: 60, 
+          scale: 0.85, 
+          rotate: 4,
+          filter: 'blur(12px)',
+          transformOrigin: 'left top'
+        }, 
+        { 
+          opacity: 1, 
+          y: 0, 
+          scale: 1, 
+          rotate: 0,
+          filter: 'blur(0px)', 
+          duration: 1.8, 
+          stagger: 0.05, 
+          ease: 'expo.out' 
+        }
       )
-      .to(headingRef.current, { scale: 1.08, duration: 0.6, ease: 'power2.out' }, 0.2)
-      .to(headingRef.current, { scale: 1, duration: 0.8, ease: 'power2.inOut' });
+      // Subtle pulse on the main header wrapper to align with the original dynamic
+      .to(headingRef.current, { scale: 1.05, duration: 0.8, ease: 'power2.out' }, 0.2)
+      .to(headingRef.current, { scale: 1, duration: 1.0, ease: 'power3.inOut' });
 
       // Navigation reveal (Staggered Pulse: 1 -> 1.08 -> 1)
       if (navRef.current) {
@@ -67,35 +99,50 @@ const HeroSection = () => {
     }, sectionRef);
 
     return () => ctx.revert();
-  }, []);
+  }, [isPreloaderDone]);
 
   /* ── Cinematic Image Trail Logic ───────────────────────────── */
   useEffect(() => {
     const section = sectionRef.current;
     if (!section) return;
 
-    // Initialize initial mouse position to center of section
+    // Disable custom cursor on touch/coarse pointer devices
+    const isCoarse = (typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(pointer: coarse)').matches) || (typeof window !== 'undefined' && 'ontouchstart' in window);
+
+    // Initialize initial mouse position to center of section in viewport coordinates
     const rect = section.getBoundingClientRect();
-    smoothMouse.current = { x: rect.width / 2, y: rect.height / 2 };
-    lastSpawn.current = { x: rect.width / 2, y: rect.height / 2 };
+    smoothMouse.current = { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
+    lastSpawn.current = { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
 
     const lerp = (a, b, n) => (1 - n) * a + n * b;
     const distance = (x1, y1, x2, y2) => Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
 
     const onMouseMove = (e) => {
-      const bRect = section.getBoundingClientRect();
-      mouse.current.x = e.clientX - bRect.left;
-      mouse.current.y = e.clientY - bRect.top;
+      mouse.current.x = e.clientX;
+      mouse.current.y = e.clientY;
       mouse.current.isActive = true;
+
+      // Smart Hover: Hide hero custom cursor when hovering interactive elements to let global cursor dominate
+      if (heroCursorRef.current && !isCoarse && isPreloaderDone) {
+        const isHoveringInteractive = e.target && e.target.closest && e.target.closest('.cursor-hover, a, button');
+        heroCursorRef.current.style.opacity = isHoveringInteractive ? '0' : '1';
+      }
     };
 
     const onMouseLeave = () => {
       mouse.current.isActive = false;
+      if (heroCursorRef.current) {
+        heroCursorRef.current.style.opacity = '0';
+      }
     };
 
     const spawnImage = (x, y, velocityX, velocityY) => {
       const el = poolRefs.current[currentIndex.current];
       if (!el) return;
+
+      const bRect = section.getBoundingClientRect();
+      const localX = x - bRect.left;
+      const localY = y - bRect.top;
 
       // Assign cinematic image
       const imgData = IMAGES[imgIndex.current];
@@ -111,45 +158,45 @@ const HeroSection = () => {
       // Randomize initial rotation for organic feel
       const rot = Math.random() * 16 - 8; // -8deg to 8deg
       
-      // Calculate smooth inertia target
+      // Calculate smooth inertia target inside local coordinate space
       const inertiaFactor = 0.8;
-      const targetX = x + velocityX * inertiaFactor;
-      const targetY = y + velocityY * inertiaFactor;
+      const targetX = localX + velocityX * inertiaFactor;
+      const targetY = localY + velocityY * inertiaFactor;
 
       // Cancel any ongoing animations on this recycled element
       gsap.killTweensOf(el);
 
-      // Set instantaneous spawn state
+      // Set instantaneous spawn state using local offsets
       gsap.set(el, {
-        x: x - el.offsetWidth / 2,
-        y: y - el.offsetHeight / 2,
+        x: localX - el.offsetWidth / 2,
+        y: localY - el.offsetHeight / 2,
         rotation: rot,
         scale: 0.5,
         opacity: 0,
       });
 
-      // Phase 1: Reveal smoothly
+      // Phase 1: Reveal smoothly (longer duration for premium feel)
       gsap.to(el, {
         opacity: 1,
         scale: 1,
-        duration: 0.4,
+        duration: 0.6,
         ease: 'power2.out',
       });
 
-      // Phase 2: Inertia drift
+      // Phase 2: Inertia drift (slower, longer cinematic glide)
       gsap.to(el, {
         x: targetX - el.offsetWidth / 2,
         y: targetY - el.offsetHeight / 2,
-        duration: 1.5,
+        duration: 2.4,
         ease: 'power3.out',
       });
 
-      // Phase 3: Dissolve
+      // Phase 3: Dissolve (visible longer before fading out smoothly)
       gsap.to(el, {
         opacity: 0,
-        scale: 0.85,
-        duration: 0.6,
-        delay: 0.7,
+        scale: 0.9,
+        duration: 0.8,
+        delay: 1.2,
         ease: 'power2.inOut',
       });
 
@@ -158,18 +205,23 @@ const HeroSection = () => {
     };
 
     const tick = () => {
+      // Compute velocity for inertia
+      const prevX = smoothMouse.current.x;
+      const prevY = smoothMouse.current.y;
+
+      // Fluid lerping (reduced from 0.12 for weightier, smoother response)
+      smoothMouse.current.x = lerp(smoothMouse.current.x, mouse.current.x, 0.08);
+      smoothMouse.current.y = lerp(smoothMouse.current.y, mouse.current.y, 0.08);
+
+      const velocityX = smoothMouse.current.x - prevX;
+      const velocityY = smoothMouse.current.y - prevY;
+
+      // Update custom circular cursor position smoothly (independent of movement check so it lerps to a soft stop)
+      if (heroCursorRef.current && !isCoarse && isPreloaderDone) {
+        heroCursorRef.current.style.transform = `translate3d(${smoothMouse.current.x}px, ${smoothMouse.current.y}px, 0) translate(-50%, -50%)`;
+      }
+
       if (mouse.current.isActive) {
-        // Compute velocity for inertia
-        const prevX = smoothMouse.current.x;
-        const prevY = smoothMouse.current.y;
-
-        // Fluid lerping
-        smoothMouse.current.x = lerp(smoothMouse.current.x, mouse.current.x, 0.12);
-        smoothMouse.current.y = lerp(smoothMouse.current.y, mouse.current.y, 0.12);
-
-        const velocityX = smoothMouse.current.x - prevX;
-        const velocityY = smoothMouse.current.y - prevY;
-
         const dist = distance(lastSpawn.current.x, lastSpawn.current.y, smoothMouse.current.x, smoothMouse.current.y);
 
         if (dist > SPAWN_DISTANCE) {
@@ -197,8 +249,18 @@ const HeroSection = () => {
   return (
     <section
       ref={sectionRef}
-      className="relative w-full h-[100vh] bg-black overflow-hidden flex items-center justify-center cursor-crosshair"
+      className="relative w-full h-[100vh] bg-black overflow-hidden flex items-center justify-center cursor-none"
     >
+      {/* --- Premium Custom Circular Cursor --- */}
+      <div
+        ref={heroCursorRef}
+        className="fixed pointer-events-none rounded-full bg-white opacity-0 transition-opacity duration-300 ease-out z-[2500] hidden md:block"
+        style={{
+          width: '10px',
+          height: '10px',
+          willChange: 'transform, opacity',
+        }}
+      />
       {/* --- Dynamic Image Pool --- */}
       <div className="absolute inset-0 pointer-events-none z-[1500]">
         {Array.from({ length: POOL_SIZE }).map((_, i) => (
@@ -223,7 +285,22 @@ const HeroSection = () => {
           ref={headingRef}
           className="text-[clamp(60px,15vw,220px)] font-black tracking-tighter leading-none text-white mix-blend-difference"
         >
-          Parth Panchal
+          {"Parth Panchal".split(" ").map((word, wordIndex, arr) => (
+            <span key={wordIndex} className="inline-block whitespace-nowrap">
+              {word.split("").map((char, charIndex) => (
+                <span
+                  key={charIndex}
+                  className="inline-block char-item opacity-0"
+                  style={{ opacity: 0, willChange: 'transform, opacity, filter' }}
+                >
+                  {char}
+                </span>
+              ))}
+              {wordIndex < arr.length - 1 && (
+                <span className="inline-block char-item opacity-0" style={{ opacity: 0, willChange: 'transform, opacity, filter' }}>&nbsp;</span>
+              )}
+            </span>
+          ))}
         </h1>
       </div>
 
@@ -251,9 +328,9 @@ const HeroSection = () => {
         
         {/* CENTER */}
         <div className="flex justify-center gap-8 md:gap-12 w-[40%] text-white pointer-events-auto">
-          <a href="#work" className="hover:text-white transition-colors duration-300 nav-anim-item">WORK</a>
-          <a href="#about" className="hover:text-white transition-colors duration-300 nav-anim-item">ABOUT</a>
-          <a href="#contact" className="hover:text-white transition-colors duration-300 nav-anim-item">CONTACT</a>
+          <a href="#work" className="hover:text-white transition-colors duration-300 nav-anim-item cursor-hover" data-cursor-size="60">WORK</a>
+          <a href="#about" className="hover:text-white transition-colors duration-300 nav-anim-item cursor-hover" data-cursor-size="60">ABOUT</a>
+          <a href="#contact" className="hover:text-white transition-colors duration-300 nav-anim-item cursor-hover" data-cursor-size="60">CONTACT</a>
         </div>
 
         {/* RIGHT */}

@@ -27,7 +27,7 @@ export const useCustomCursor = (isActive = false) => {
   const isActiveRef = useRef(isActive);
   const scaleRef = useRef(0); // current scale
   const targetScaleRef = useRef(1); // target scale for lerp
-  const defaultSize = 100;
+  const defaultSize = 80;
 
   // Update ref when isActive changes
   useEffect(() => {
