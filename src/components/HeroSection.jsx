@@ -1,4 +1,5 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
 import gsap from 'gsap';
 
 /* ── Cinematic Image Config ────────────────────────────────────── */
@@ -21,6 +22,7 @@ const HeroSection = ({ isPreloaderDone = true }) => {
   const poolRefs = useRef([]);
   const navRef = useRef(null);
   const heroCursorRef = useRef(null);
+  const imagePoolContainerRef = useRef(null);
 
   // State refs for the requestAnimationFrame loop
   const mouse = useRef({ x: 0, y: 0, isActive: false });
@@ -30,6 +32,64 @@ const HeroSection = ({ isPreloaderDone = true }) => {
   const imgIndex = useRef(0);
   const globalZIndex = useRef(10);
   const rafId = useRef(null);
+
+  // High-performance animation and layout references
+  const sectionRect = useRef({ left: 0, top: 0, width: 0, height: 0 });
+  const smoothParallax = useRef({ x: 0, y: 0 });
+  const isFirstMove = useRef(true);
+
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  // Toggle body overflow hidden on menu state toggles to prevent underlying page scrolling
+  useEffect(() => {
+    if (isMenuOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [isMenuOpen]);
+
+  // Close on Escape key press
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') setIsMenuOpen(false);
+    };
+    if (isMenuOpen) window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isMenuOpen]);
+
+  const menuVariants = {
+    initial: { y: "-100%" },
+    animate: { 
+      y: 0,
+      transition: { duration: 0.55, ease: [0.16, 1, 0.3, 1] }
+    },
+    exit: { 
+      y: "-100%",
+      transition: { duration: 0.45, ease: [0.16, 1, 0.3, 1] }
+    }
+  };
+
+  const containerVariants = {
+    animate: {
+      transition: {
+        staggerChildren: 0.08,
+        delayChildren: 0.2
+      }
+    }
+  };
+
+  const itemVariants = {
+    initial: { opacity: 0, y: 30 },
+    animate: { 
+      opacity: 1, 
+      y: 0, 
+      transition: { duration: 0.6, ease: [0.16, 1, 0.3, 1] } 
+    }
+  };
 
   /* ── Entry Animations ──────────────────────────────────────── */
   useEffect(() => {
@@ -106,11 +166,20 @@ const HeroSection = ({ isPreloaderDone = true }) => {
     const section = sectionRef.current;
     if (!section) return;
 
+    // Cache section bounding rectangle and update on resize to eliminate DOM layout thrashing
+    const handleResize = () => {
+      if (sectionRef.current) {
+        sectionRect.current = sectionRef.current.getBoundingClientRect();
+      }
+    };
+    handleResize();
+    window.addEventListener('resize', handleResize);
+
     // Disable custom cursor on touch/coarse pointer devices
     const isCoarse = (typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(pointer: coarse)').matches) || (typeof window !== 'undefined' && 'ontouchstart' in window);
 
     // Initialize initial mouse position to center of section in viewport coordinates
-    const rect = section.getBoundingClientRect();
+    const rect = sectionRect.current;
     smoothMouse.current = { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
     lastSpawn.current = { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
 
@@ -118,9 +187,19 @@ const HeroSection = ({ isPreloaderDone = true }) => {
     const distance = (x1, y1, x2, y2) => Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
 
     const onMouseMove = (e) => {
+      const isReentry = !mouse.current.isActive;
       mouse.current.x = e.clientX;
       mouse.current.y = e.clientY;
       mouse.current.isActive = true;
+
+      // Smart Snapping on first enter or reentry to prevent cursor/trail teleportation/jumping
+      if (isFirstMove.current || isReentry) {
+        smoothMouse.current.x = e.clientX;
+        smoothMouse.current.y = e.clientY;
+        lastSpawn.current.x = e.clientX;
+        lastSpawn.current.y = e.clientY;
+        isFirstMove.current = false;
+      }
 
       // Smart Hover: Hide hero custom cursor when hovering interactive elements to let global cursor dominate
       if (heroCursorRef.current && !isCoarse && isPreloaderDone) {
@@ -136,11 +215,14 @@ const HeroSection = ({ isPreloaderDone = true }) => {
       }
     };
 
+    const IMG_WIDTH = 245;
+    const IMG_HEIGHT = 170;
+
     const spawnImage = (x, y, velocityX, velocityY) => {
       const el = poolRefs.current[currentIndex.current];
       if (!el) return;
 
-      const bRect = section.getBoundingClientRect();
+      const bRect = sectionRect.current;
       const localX = x - bRect.left;
       const localY = y - bRect.top;
 
@@ -166,10 +248,10 @@ const HeroSection = ({ isPreloaderDone = true }) => {
       // Cancel any ongoing animations on this recycled element
       gsap.killTweensOf(el);
 
-      // Set instantaneous spawn state using local offsets
+      // Set instantaneous spawn state using local offsets and constant width/height to avoid layout reflows
       gsap.set(el, {
-        x: localX - el.offsetWidth / 2,
-        y: localY - el.offsetHeight / 2,
+        x: localX - IMG_WIDTH / 2,
+        y: localY - IMG_HEIGHT / 2,
         rotation: rot,
         scale: 0.5,
         opacity: 0,
@@ -185,8 +267,8 @@ const HeroSection = ({ isPreloaderDone = true }) => {
 
       // Phase 2: Inertia drift (slower, longer cinematic glide)
       gsap.to(el, {
-        x: targetX - el.offsetWidth / 2,
-        y: targetY - el.offsetHeight / 2,
+        x: targetX - IMG_WIDTH / 2,
+        y: targetY - IMG_HEIGHT / 2,
         duration: 2.4,
         ease: 'power3.out',
       });
@@ -209,17 +291,46 @@ const HeroSection = ({ isPreloaderDone = true }) => {
       const prevX = smoothMouse.current.x;
       const prevY = smoothMouse.current.y;
 
-      // Fluid lerping (reduced from 0.12 for weightier, smoother response)
-      smoothMouse.current.x = lerp(smoothMouse.current.x, mouse.current.x, 0.08);
-      smoothMouse.current.y = lerp(smoothMouse.current.y, mouse.current.y, 0.08);
+      // Snappy and responsive high-fidelity mouse lerping (increased from 0.08 to 0.16)
+      smoothMouse.current.x = lerp(smoothMouse.current.x, mouse.current.x, 0.16);
+      smoothMouse.current.y = lerp(smoothMouse.current.y, mouse.current.y, 0.16);
 
       const velocityX = smoothMouse.current.x - prevX;
       const velocityY = smoothMouse.current.y - prevY;
 
-      // Update custom circular cursor position smoothly (independent of movement check so it lerps to a soft stop)
+      // Update custom circular cursor position smoothly using pixel-perfect viewport offset
       if (heroCursorRef.current && !isCoarse && isPreloaderDone) {
         heroCursorRef.current.style.transform = `translate3d(${smoothMouse.current.x}px, ${smoothMouse.current.y}px, 0) translate(-50%, -50%)`;
       }
+
+      // Update image pool container sway/follow parallax dynamically on mouse move
+      if (imagePoolContainerRef.current) {
+        const centerX = window.innerWidth / 2;
+        const centerY = window.innerHeight / 2;
+        
+        // Target parallax is proportional to displacement from center
+        const targetParallaxX = (mouse.current.x - centerX) * 0.035;
+        const targetParallaxY = (mouse.current.y - centerY) * 0.035;
+        
+        // Lerp the sway/parallax for fluid secondary motion
+        smoothParallax.current.x = lerp(smoothParallax.current.x, targetParallaxX, 0.08);
+        smoothParallax.current.y = lerp(smoothParallax.current.y, targetParallaxY, 0.08);
+        
+        imagePoolContainerRef.current.style.transform = `translate3d(${smoothParallax.current.x}px, ${smoothParallax.current.y}px, 0)`;
+      }
+
+      // Apply real-time micro-parallax follow effect to each active image in the pool
+      poolRefs.current.forEach((el) => {
+        if (el && parseFloat(el.style.opacity) > 0) {
+          const img = el.querySelector('img');
+          if (img) {
+            // Sway in opposite direction to container to create stunning 3D depth windows!
+            const imgParallaxX = -smoothParallax.current.x * 0.6;
+            const imgParallaxY = -smoothParallax.current.y * 0.6;
+            img.style.transform = `scale(1.15) translate3d(${imgParallaxX}px, ${imgParallaxY}px, 0)`;
+          }
+        }
+      });
 
       if (mouse.current.isActive) {
         const dist = distance(lastSpawn.current.x, lastSpawn.current.y, smoothMouse.current.x, smoothMouse.current.y);
@@ -242,9 +353,10 @@ const HeroSection = ({ isPreloaderDone = true }) => {
     return () => {
       section.removeEventListener('mousemove', onMouseMove);
       section.removeEventListener('mouseleave', onMouseLeave);
+      window.removeEventListener('resize', handleResize);
       cancelAnimationFrame(rafId.current);
     };
-  }, []);
+  }, [isPreloaderDone]);
 
   return (
     <section
@@ -254,7 +366,7 @@ const HeroSection = ({ isPreloaderDone = true }) => {
       {/* --- Premium Custom Circular Cursor --- */}
       <div
         ref={heroCursorRef}
-        className="fixed pointer-events-none rounded-full bg-white opacity-0 transition-opacity duration-300 ease-out z-[2500] hidden md:block"
+        className="fixed top-0 left-0 pointer-events-none rounded-full bg-white opacity-0 transition-opacity duration-300 ease-out z-[2500] hidden md:block"
         style={{
           width: '10px',
           height: '10px',
@@ -262,7 +374,11 @@ const HeroSection = ({ isPreloaderDone = true }) => {
         }}
       />
       {/* --- Dynamic Image Pool --- */}
-      <div className="absolute inset-0 pointer-events-none z-[1500]">
+      <div 
+        ref={imagePoolContainerRef} 
+        className="absolute inset-0 pointer-events-none z-[1500]"
+        style={{ willChange: 'transform' }}
+      >
         {Array.from({ length: POOL_SIZE }).map((_, i) => (
           <div
             key={i}
@@ -318,26 +434,87 @@ const HeroSection = ({ isPreloaderDone = true }) => {
       {/* --- Top Navigation UI --- */}
       <div 
         ref={navRef}
-        className="absolute top-0 left-0 w-full z-[2000] pointer-events-none p-6 md:p-10 flex justify-between items-start mix-blend-difference text-xs md:text-sm tracking-widest font-medium uppercase text-gray-200"
+        className="absolute top-0 left-0 w-full z-[2000] pointer-events-none p-6 md:p-10 flex justify-between items-start mix-blend-difference text-xs md:text-sm tracking-widest font-semibold uppercase text-gray-200"
       >
         {/* LEFT */}
-        <div className="flex flex-col gap-1 w-[30%] text-left nav-anim-item">
+        <div className="flex flex-col gap-1 w-[60%] md:w-[30%] text-left nav-anim-item">
           <span className="text-white">PARTH PANCHAL</span>
-          <span className="text-white/40">VIDEO EDITOR</span>
+          <span className="text-white/40 text-[10px] md:text-xs">VIDEO EDITOR</span>
         </div>
         
         {/* CENTER */}
-        <div className="flex justify-center gap-8 md:gap-12 w-[40%] text-white pointer-events-auto">
+        <div className="hidden md:flex justify-center gap-8 md:gap-12 w-[40%] text-white pointer-events-auto">
           <a href="#work" className="hover:text-white transition-colors duration-300 nav-anim-item cursor-hover" data-cursor-size="60">WORK</a>
           <a href="#about" className="hover:text-white transition-colors duration-300 nav-anim-item cursor-hover" data-cursor-size="60">ABOUT</a>
           <a href="#contact" className="hover:text-white transition-colors duration-300 nav-anim-item cursor-hover" data-cursor-size="60">CONTACT</a>
         </div>
 
         {/* RIGHT */}
-        <div className="w-[30%] text-right text-white nav-anim-item">
+        <div className="hidden md:block w-[30%] text-right text-white nav-anim-item">
           <span>©2026</span>
         </div>
+
+        {/* MOBILE HAMBURGER BUTTON (visible on mobile only) */}
+        <div className="flex md:hidden w-[40%] md:w-[30%] justify-end pointer-events-auto z-[60]">
+          <button
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
+            className="flex items-center justify-center w-8 h-8 focus:outline-none"
+            aria-label={isMenuOpen ? "Close Menu" : "Open Menu"}
+            aria-expanded={isMenuOpen}
+          >
+            <div className="w-6 h-6 flex items-center justify-center relative">
+              <motion.span
+                animate={isMenuOpen ? { rotate: 45, y: 0 } : { rotate: 0, y: -5 }}
+                transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+                className="absolute h-[1.5px] w-5 bg-white rounded-full block"
+              />
+              <motion.span
+                animate={isMenuOpen ? { opacity: 0, scale: 0 } : { opacity: 1, scale: 1 }}
+                transition={{ duration: 0.2 }}
+                className="absolute h-[1.5px] w-5 bg-white rounded-full block"
+              />
+              <motion.span
+                animate={isMenuOpen ? { rotate: -45, y: 0 } : { rotate: 0, y: 5 }}
+                transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+                className="absolute h-[1.5px] w-5 bg-white rounded-full block"
+              />
+            </div>
+          </button>
+        </div>
       </div>
+
+      {/* MOBILE FULL-SCREEN PANEL */}
+      <AnimatePresence>
+        {isMenuOpen && (
+          <motion.div
+            variants={menuVariants}
+            initial="initial"
+            animate="animate"
+            exit="exit"
+            className="fixed top-0 left-0 w-full h-[100dvh] bg-black/98 backdrop-blur-md z-[1900] flex flex-col justify-center items-center pointer-events-auto border-b border-neutral-800"
+          >
+            <motion.div
+              variants={containerVariants}
+              initial="initial"
+              animate="animate"
+              className="flex flex-col items-center gap-8 text-2xl font-display font-medium tracking-[0.18em] text-gray-200 uppercase text-center"
+            >
+              <motion.div variants={itemVariants}>
+                <a href="#work" onClick={() => setIsMenuOpen(false)} className="hover:text-white transition-colors block py-3 cursor-hover">WORK</a>
+              </motion.div>
+              <motion.div variants={itemVariants}>
+                <a href="#about" onClick={() => setIsMenuOpen(false)} className="hover:text-white transition-colors block py-3 cursor-hover">ABOUT</a>
+              </motion.div>
+              <motion.div variants={itemVariants}>
+                <a href="#contact" onClick={() => setIsMenuOpen(false)} className="hover:text-white transition-colors block py-3 cursor-hover">CONTACT</a>
+              </motion.div>
+              <motion.div variants={itemVariants} className="mt-8 text-xs tracking-widest text-neutral-500 font-sans font-normal normal-case">
+                ©2026 Parth Panchal
+              </motion.div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* --- Vignette --- */}
       <div className="absolute inset-0 pointer-events-none z-[500] bg-[radial-gradient(circle_at_center,transparent_0%,rgba(0,0,0,0.4)_100%)]" />
