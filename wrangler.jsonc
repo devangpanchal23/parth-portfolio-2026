@@ -1,7 +1,7 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "parth-portfolio-2026",
-  "compatibility_date": "2026-05-30",
+  "compatibility_date": "2026-05-31",
   "observability": {
     "enabled": true
   },
