@@ -152,13 +152,15 @@ export const ProjectDetail = ({ setIsImageHovered }) => {
           // Render video
           if (item.type === 'video') {
             return (
-              <section key={idx} className="w-full max-w-[1200px] mx-auto px-[15%] lg:px-12 pb-8 sm:pb-16 md:pb-24" onMouseEnter={() => setIsImageHovered && setIsImageHovered(true)} onMouseLeave={() => setIsImageHovered && setIsImageHovered(false)}>
-                <VideoPlayer 
-                  videoSrc={item.src}
-                  posterImage={item.poster || ""}
-                  className={`w-full ${getResponsiveAspect(item.aspect)} will-change-gpu`}
-                  autoPlay={false}
-                />
+              <section key={idx} className="w-full max-w-[1200px] mx-auto px-[15%] lg:px-12 pb-8 sm:pb-16 md:pb-24">
+                <div className="w-full cursor-hover will-change-gpu" onMouseEnter={() => setIsImageHovered && setIsImageHovered(true)} onMouseLeave={() => setIsImageHovered && setIsImageHovered(false)}>
+                  <VideoPlayer 
+                    videoSrc={item.src}
+                    posterImage={item.poster || ""}
+                    className="w-full aspect-video"
+                    autoPlay={false}
+                  />
+                </div>
               </section>
             );
           }
@@ -222,12 +224,9 @@ export const ProjectDetail = ({ setIsImageHovered }) => {
               )}
 
               {section.type === 'youtube' && (
-                <motion.div
-                  initial={{ opacity: 0, y: 35 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-100px" }} transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-                  className="will-change-gpu"
-                >
-                  <ProjectVideo src={section.src} className="aspect-video" />
-                </motion.div>
+                <div className="w-full cursor-hover will-change-gpu" onMouseEnter={() => setIsImageHovered && setIsImageHovered(true)} onMouseLeave={() => setIsImageHovered && setIsImageHovered(false)}>
+                  <ProjectVideo src={section.src} className="w-full aspect-video" />
+                </div>
               )}
 
               {section.type === 'grid' && (

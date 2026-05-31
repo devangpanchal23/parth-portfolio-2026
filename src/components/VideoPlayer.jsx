@@ -158,23 +158,7 @@ export default function VideoPlayer({ videoSrc, posterImage, className = "aspect
         onClick={(e) => e.stopPropagation()} // Let container handle the click
       />
 
-      {/* --- GIANT PLAY BUTTON (Initial/Paused State) --- */}
-      <AnimatePresence>
-        {!isPlaying && (
-          <motion.div
-            className="absolute inset-0 z-10 flex items-center justify-center pointer-events-none"
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.9 }}
-            transition={{ duration: 0.3 }}
-          >
-            <div className="absolute inset-0 bg-black/30 backdrop-blur-[2px]" />
-            <div className="relative flex items-center justify-center w-20 h-20 md:w-24 md:h-24 rounded-full bg-white/10 backdrop-blur-md border border-white/20 shadow-[0_0_30px_rgba(0,0,0,0.5)]">
-              <Play className="text-white ml-2 relative z-10" size={32} fill="white" />
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+
 
       {/* --- CUSTOM CONTROL BAR --- */}
       <AnimatePresence>

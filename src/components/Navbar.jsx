@@ -170,7 +170,7 @@ export const Navbar = () => {
               variants={containerVariants}
               initial="initial"
               animate="animate"
-              className="flex flex-col items-center gap-8 text-2xl font-display font-medium tracking-[0.18em] text-gray-200 uppercase text-center"
+              className="flex flex-col items-center gap-4 text-2xl font-display font-medium tracking-[0.18em] text-gray-200 uppercase text-center"
             >
               <motion.div variants={itemVariants}>
                 <a
@@ -181,6 +181,13 @@ export const Navbar = () => {
                   WORK
                 </a>
               </motion.div>
+              
+              <motion.div 
+                variants={itemVariants}
+                className="w-[60vw] max-w-[200px] h-[1px] bg-white/10"
+                aria-hidden="true"
+              />
+
               <motion.div variants={itemVariants}>
                 <a
                   href="/#about"
@@ -190,6 +197,13 @@ export const Navbar = () => {
                   ABOUT
                 </a>
               </motion.div>
+              
+              <motion.div 
+                variants={itemVariants}
+                className="w-[60vw] max-w-[200px] h-[1px] bg-white/10"
+                aria-hidden="true"
+              />
+
               <motion.div variants={itemVariants}>
                 <a
                   href="/#contact"
@@ -199,6 +213,7 @@ export const Navbar = () => {
                   CONTACT
                 </a>
               </motion.div>
+              
               <motion.div variants={itemVariants} className="mt-8 text-xs tracking-widest text-neutral-500 font-sans font-normal normal-case">
                 ©2026 Parth Panchal
               </motion.div>

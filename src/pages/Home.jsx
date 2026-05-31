@@ -24,7 +24,7 @@ export const Home = ({ setIsImageHovered, isPreloaderDone }) => {
       <HeroSection isPreloaderDone={isPreloaderDone} />
 
       {/* --- SELECTED WORK SECTION --- */}
-      <section id="work" className="w-full py-24 mt-12 border-t border-[#222]">
+      <section id="work" className="w-full pt-24 pb-12 md:pb-16 lg:pb-24 mt-12 border-t border-[#222]">
         <div className="w-full max-w-[1500px] mx-auto px-6 md:px-12">
           <h2 className="font-display text-4xl md:text-5xl lg:text-7xl font-semibold tracking-[-1px] mb-16 lowercase text-white">
             selected work.
@@ -162,7 +162,7 @@ export const Home = ({ setIsImageHovered, isPreloaderDone }) => {
 
 
       {/* --- ABOUT SECTION --- */}
-      <section id="about" className="w-full py-24 mt-12 md:mt-20 border-t border-[#222]">
+      <section id="about" className="w-full pt-12 pb-24 md:pt-16 lg:pt-24 mt-8 md:mt-12 lg:mt-20 border-t border-[#222]">
         <div className="w-full max-w-[1500px] mx-auto px-6 md:px-12 flex flex-col md:flex-row gap-16 md:gap-24 lg:gap-32 items-start justify-between">
           <motion.div 
             className="w-full md:w-1/2 flex flex-col gap-10" 

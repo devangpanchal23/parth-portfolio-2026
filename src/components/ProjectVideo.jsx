@@ -16,7 +16,7 @@ const ProjectVideo = ({ src, className = "aspect-[16/9]" }) => {
         url.searchParams.set('playsinline', '1');
       }
       return url.toString();
-    } catch (e) {
+    } catch {
       return src; // Fallback to raw src if parsing fails
     }
   }, [src]);
@@ -24,25 +24,23 @@ const ProjectVideo = ({ src, className = "aspect-[16/9]" }) => {
   if (!src) return null;
 
   return (
-    <div className="w-full flex justify-center items-center group">
-      <motion.div 
-        className={`w-full relative overflow-hidden rounded-[4px] shadow-[0_20px_60px_rgba(0,0,0,0.5)] transition-transform duration-700 ease-out bg-[#0a0a0a] border border-white/5 ${className}`}
-        initial={{ opacity: 0, y: 50 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, margin: "-100px" }}
-        transition={{ duration: 0.8 }}
-      >
-        <iframe
-          src={cleanUrl}
-          title="Project Video"
-          className="absolute top-0 left-0 w-full h-full"
-          frameBorder="0"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-          allowFullScreen
-          loading="lazy"
-        ></iframe>
-      </motion.div>
-    </div>
+    <motion.div 
+      className={`relative overflow-hidden bg-black rounded-[4px] border border-white/5 shadow-[0_20px_60px_rgba(0,0,0,0.5)] group ${className}`}
+      initial={{ opacity: 0, y: 50 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-100px" }}
+      transition={{ duration: 0.8 }}
+    >
+      <iframe
+        src={cleanUrl}
+        title="Project Video"
+        className="absolute top-0 left-0 w-full h-full"
+        frameBorder="0"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+        allowFullScreen
+        loading="lazy"
+      ></iframe>
+    </motion.div>
   );
 };
 

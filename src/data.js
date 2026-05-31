@@ -17,7 +17,7 @@ export const projectsData = {
     sections: [
       { type: "full", src: "https://images.unsplash.com/photo-1542204165-65bf26472b9b?w=2000&q=80" },
       { type: "compare", before: img1Before, after: img1After, aspect: "aspect-[16/9]" },
-      { type: "youtube", src: "https://www.youtube.com/embed/Jcj6kJvc_Vw" },
+      { type: "video", src: "https://videos.pexels.com/video-files/853889/853889-hd_1920_1080_25fps.mp4", poster: "https://images.unsplash.com/photo-1587329310686-91414b8e3cb7?w=2000&q=80" },
     ],
     nextSlug: "pepsi-generation",
     nextTitle: "Pepsi: The New Generation"
@@ -32,7 +32,7 @@ export const projectsData = {
     heroImage: "https://images.unsplash.com/photo-1622483767028-3f66f32aef97?w=1600&q=80",
     sections: [
       { type: "compare", before: "https://images.unsplash.com/photo-1622483767028-3f66f32aef97?w=1600&q=80&exp=-40&con=10", after: "https://images.unsplash.com/photo-1622483767028-3f66f32aef97?w=1600&q=80&exp=0", aspect: "aspect-[16/10]" },
-      { type: "video", src: "https://videos.pexels.com/video-files/4010134/4010134-uhd_3840_2160_25fps.mp4", poster: "https://images.unsplash.com/photo-1622483767028-3f66f32aef97?w=1600&q=80" },
+      { type: "video", src: "https://videos.pexels.com/video-files/853889/853889-hd_1920_1080_25fps.mp4", poster: "https://images.unsplash.com/photo-1587329310686-91414b8e3cb7?w=2000&q=80" },
       { type: "full", src: "https://images.unsplash.com/photo-1587329310686-91414b8e3cb7?w=2000&q=80" },
     ],
     nextSlug: "project-rock",
@@ -48,7 +48,7 @@ export const projectsData = {
     heroImage: "https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?w=1600&q=80",
     sections: [
       { type: "compare", before: img2Before, after: img2After, aspect: "aspect-[16/9]" },
-      { type: "video", src: "https://videos.pexels.com/video-files/3206020/3206020-uhd_2560_1440_25fps.mp4", poster: "https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?w=1600&q=80" },
+      { type: "video", src: "https://videos.pexels.com/video-files/853889/853889-hd_1920_1080_25fps.mp4", poster: "https://images.unsplash.com/photo-1587329310686-91414b8e3cb7?w=2000&q=80" },
       { type: "full", src: "https://images.unsplash.com/photo-1542204165-65bf26472b9b?w=2000&q=80" },
     ],
     nextSlug: "leaf-moon",

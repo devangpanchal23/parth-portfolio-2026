@@ -37,7 +37,7 @@ const EmailModal = ({ isOpen, onClose }) => {
       } else {
         setSubmitStatus({ type: 'error', message: result.error });
       }
-    } catch (error) {
+    } catch {
       setSubmitStatus({ type: 'error', message: 'Something went wrong. Please try again.' });
     } finally {
       setIsSubmitting(false);
