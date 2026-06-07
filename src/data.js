@@ -4,52 +4,79 @@ import img2Before from "./media/img-2-before.png";
 import img2After from "./media/img-2-after.png";
 import img3Before from "./media/img-3-before.png";
 import img3After from "./media/img-3-after.png";
+import dreamsToRealityVideo from "./assets/videos/export.mov";
+import img11 from "./assets/images/1.1.png";
+import img12 from "./assets/images/1.2.png";
+import img13 from "./assets/images/1.3.png";
+import img14 from "./assets/images/1.4.png";
+import img21 from "./assets/images/2.1.png";
+import img22 from "./assets/images/2.2.png";
+import img31 from "./assets/images/3.1.png";
+import img32 from "./assets/images/3.2.png";
+import img33 from "./assets/images/3.3.png";
+import commercialLookVideo from "./assets/videos/Commercial Look.mov";
 
 export const projectsData = {
   "canada-goose": {
-    title: "Canada Goose: Heritage & Craftsmanship",
-    client: "Canada Goose",
-    year: "2024",
-    role: "Video Editor / Colorist",
+    title: "The Lost Dream Project",
+    client: "Self-Initiated Project",
+    year: "2026 (or the actual year)",
+    role: "Colorist",
     deliverables: "Video Editing / Color Grading",
-    description: "A deep dive into the legacy of Canada Goose, highlighting their commitment to extreme weather protection and timeless craftsmanship. The edit required precise pacing to balance emotional storytelling intricately with technical product details.",
+    description: `A narrative short film exploring themes of ambition, loss, and self-discovery.
+The color grade was crafted to enhance the emotional journey of the story,
+    using subtle tonal shifts, contrast, and color separation to reinforce mood and
+    character progression while maintaining a cinematic visual identity.`,
     heroImage: "https://images.unsplash.com/photo-1601004890684-d8cbf643f5f2?w=1600&q=80",
+    hideHero: true,
     sections: [
-      { type: "full", src: "https://images.unsplash.com/photo-1542204165-65bf26472b9b?w=2000&q=80" },
-      { type: "compare", before: img1Before, after: img1After, aspect: "aspect-[16/9]" },
-      { type: "video", src: "https://videos.pexels.com/video-files/853889/853889-hd_1920_1080_25fps.mp4", poster: "https://images.unsplash.com/photo-1587329310686-91414b8e3cb7?w=2000&q=80" },
+      {
+        type: "grid-2x2",
+        items: [img11, img12, img13, img14]
+      }
     ],
     nextSlug: "pepsi-generation",
     nextTitle: "Pepsi: The New Generation"
   },
   "pepsi-generation": {
-    title: "Pepsi: The New Generation",
-    client: "Pepsi",
-    year: "2023",
-    role: "Lead Editor",
-    deliverables: "Video Editing / Sound Design",
-    description: "A vibrant, fast-paced commercial cutting sharply to an original score. Designed to capture youth culture and high-energy moments.",
+    title: "From Dreams to Reality",
+    client: "Self-Initiated Project / Color Grading Community",
+    year: "2026",
+    role: "Colorist",
+    deliverables: "Color Grading / Look Development",
+    description: `A travel-driven narrative following a creator’s path from aspiration to
+achievement.The grading focused on creating a cohesive and cinematic visual
+experience.`,
     heroImage: "https://images.unsplash.com/photo-1622483767028-3f66f32aef97?w=1600&q=80",
+    hideHero: true,
     sections: [
-      { type: "compare", before: "https://images.unsplash.com/photo-1622483767028-3f66f32aef97?w=1600&q=80&exp=-40&con=10", after: "https://images.unsplash.com/photo-1622483767028-3f66f32aef97?w=1600&q=80&exp=0", aspect: "aspect-[16/10]" },
-      { type: "video", src: "https://videos.pexels.com/video-files/853889/853889-hd_1920_1080_25fps.mp4", poster: "https://images.unsplash.com/photo-1587329310686-91414b8e3cb7?w=2000&q=80" },
-      { type: "full", src: "https://images.unsplash.com/photo-1587329310686-91414b8e3cb7?w=2000&q=80" },
+      {
+        type: "grid-916",
+        items: [
+          { type: "video", src: dreamsToRealityVideo, poster: "" },
+          { type: "image", src: img21 },
+          { type: "image", src: img22 }
+        ]
+      }
     ],
     nextSlug: "project-rock",
     nextTitle: "Under Armour x Project Rock"
   },
   "project-rock": {
-    title: "Under Armour x Project Rock",
-    client: "Under Armour",
-    year: "2024",
-    role: "Editor / Colorist",
-    deliverables: "Video Editing",
-    description: "Gritty, powerful, and intense. A sports commercial focusing on pushing limits and breaking barriers.",
-    heroImage: "https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?w=1600&q=80",
+    title: "Urban Studio Commercial",
+    client: "Portfolio Project",
+    year: "2026",
+    role: "Colorist",
+    deliverables: "Color Grading / Look Development / Film Emulation",
+    description: `A fashion commercial crafted to showcase the brand’s style and identity. The
+color grade combines clean, polished visuals with subtle film-inspired tones to
+create a premium and cinematic look..`,
+    hideHero: true,
     sections: [
-      { type: "compare", before: img2Before, after: img2After, aspect: "aspect-[16/9]" },
-      { type: "video", src: "https://videos.pexels.com/video-files/853889/853889-hd_1920_1080_25fps.mp4", poster: "https://images.unsplash.com/photo-1587329310686-91414b8e3cb7?w=2000&q=80" },
-      { type: "full", src: "https://images.unsplash.com/photo-1542204165-65bf26472b9b?w=2000&q=80" },
+      { type: "video", src: commercialLookVideo, poster: img31 },
+      { type: "full", src: img32 },
+      { type: "full", src: img33 },
+      { type: "full", src: img31 },
     ],
     nextSlug: "leaf-moon",
     nextTitle: "A Leaf From The Moon"

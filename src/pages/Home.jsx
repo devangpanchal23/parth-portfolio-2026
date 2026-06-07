@@ -5,6 +5,7 @@ import HeroSection from '../components/HeroSection';
 import { Footer } from '../components/Footer';
 import ImageWithCursor from '../components/ImageWithCursor';
 import { Skeleton } from 'boneyard-js/react';
+import { projectsData } from '../data';
 
 export const Home = ({ setIsImageHovered, isPreloaderDone }) => {
   const navigate = useNavigate();
@@ -55,7 +56,12 @@ export const Home = ({ setIsImageHovered, isPreloaderDone }) => {
                 <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-10 transition-opacity duration-500 ease-out pointer-events-none" />
               </ImageWithCursor>
               <div className="flex flex-col gap-[6px] mt-2">
-                <h3 className="font-sans text-[20px] md:text-[28px] leading-[1.2] md:leading-[28px] font-medium text-white">Canada Goose: Heritage & Craftsmanship</h3>
+                <h3 className="font-sans text-[20px] md:text-[28px] leading-[1.2] md:leading-[28px] font-medium text-white">
+                  {projectsData["canada-goose"]?.title || "Canada Goose: Heritage & Craftsmanship"}
+                </h3>
+                <p className="font-sans text-xs md:text-[14px] text-neutral-400 font-light leading-relaxed max-w-[90%] line-clamp-2 my-[2px]">
+                  {projectsData["canada-goose"]?.description}
+                </p>
                 <p className="font-sans text-[10px] text-[#888] tracking-widest uppercase font-semibold">Editorial / Film</p>
               </div>
             </motion.div>
@@ -84,7 +90,12 @@ export const Home = ({ setIsImageHovered, isPreloaderDone }) => {
                 <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-10 transition-opacity duration-500 ease-out pointer-events-none" />
               </ImageWithCursor>
               <div className="flex flex-col gap-[6px] mt-2">
-                <h3 className="font-sans text-[20px] md:text-[28px] leading-[1.2] md:leading-[28px] font-medium text-white">Pepsi: The New Generation</h3>
+                <h3 className="font-sans text-[20px] md:text-[28px] leading-[1.2] md:leading-[28px] font-medium text-white">
+                  {projectsData["pepsi-generation"]?.title || "Pepsi: The New Generation"}
+                </h3>
+                <p className="font-sans text-xs md:text-[14px] text-neutral-400 font-light leading-relaxed max-w-[90%] line-clamp-2 my-[2px]">
+                  {projectsData["pepsi-generation"]?.description}
+                </p>
                 <p className="font-sans text-[10px] text-[#888] tracking-widest uppercase font-semibold">Commercial / Colour</p>
               </div>
             </motion.div>
@@ -102,21 +113,13 @@ export const Home = ({ setIsImageHovered, isPreloaderDone }) => {
               viewport={{ once: true, margin: "-100px" }} 
               transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
             >
-              <ImageWithCursor 
-                className="w-full overflow-hidden aspect-[16/10] bg-[#1a1a1a] relative cursor-hover"
-                onMouseEnter={() => setIsImageHovered && setIsImageHovered(true)} 
-                onMouseLeave={() => setIsImageHovered && setIsImageHovered(false)}
-                onClick={() => navigate('/project/project-rock')}
-              >
-                <img 
-                  src="https://images.unsplash.com/photo-1518609878373-06d740f60d8b?w=1600&q=80" 
-                  alt="Under Armour" 
-                  className="w-full h-full object-cover grayscale opacity-80 group-hover:grayscale-0 group-hover:scale-105 group-hover:opacity-100 transition-all duration-700 ease-out" 
-                />
-                <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-10 transition-opacity duration-500 ease-out pointer-events-none" />
-              </ImageWithCursor>
               <div className="flex flex-col gap-[6px] mt-2">
-                <h3 className="font-sans text-[20px] md:text-[28px] leading-[1.2] md:leading-[28px] font-medium text-white">Under Armour x Project Rock</h3>
+                <h3 className="font-sans text-[20px] md:text-[28px] leading-[1.2] md:leading-[28px] font-medium text-white">
+                  {projectsData["project-rock"]?.title || "Under Armour x Project Rock"}
+                </h3>
+                <p className="font-sans text-xs md:text-[14px] text-neutral-400 font-light leading-relaxed max-w-[90%] line-clamp-2 my-[2px]">
+                  {projectsData["project-rock"]?.description}
+                </p>
                 <p className="font-sans text-[10px] text-[#888] tracking-widest uppercase font-semibold">Sport / Cinematic</p>
               </div>
             </motion.div>
@@ -145,7 +148,12 @@ export const Home = ({ setIsImageHovered, isPreloaderDone }) => {
                 <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-10 transition-opacity duration-500 ease-out pointer-events-none" />
               </ImageWithCursor>
               <div className="flex flex-col gap-[6px] mt-2">
-                <h3 className="font-sans text-[20px] md:text-[28px] leading-[1.2] md:leading-[28px] font-medium text-white">EA FC 25: Ultimate Edition</h3>
+                <h3 className="font-sans text-[20px] md:text-[28px] leading-[1.2] md:leading-[28px] font-medium text-white">
+                  {projectsData["ea-fc"]?.title || "EA FC 25: Ultimate Edition"}
+                </h3>
+                <p className="font-sans text-xs md:text-[14px] text-neutral-400 font-light leading-relaxed max-w-[90%] line-clamp-2 my-[2px]">
+                  {projectsData["ea-fc"]?.description}
+                </p>
                 <p className="font-sans text-[10px] text-[#888] tracking-widest uppercase font-semibold">Gaming / Motion</p>
               </div>
             </motion.div>
@@ -172,11 +180,19 @@ export const Home = ({ setIsImageHovered, isPreloaderDone }) => {
             transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
           >
             <h2 className="font-display text-6xl md:text-[90px] lg:text-[110px] font-semibold leading-[0.95] tracking-[-2px] text-white">
-              Hi there,<br />I’m Parth
+              Hi,<br />I’m Parth
             </h2>
-            <p className="font-sans text-[14px] md:text-[16px] text-[#aaa] leading-[1.8] max-w-[550px] font-medium">
-              Passionate video editor with a strong eye for cinematic storytelling. I specialize in transforming raw footage into emotionally engaging visuals that connect with audiences. Born in India, processing globally, and driven by the power of visual language to connect across cultures.
-            </p>
+            <div className="font-sans text-[14px] md:text-[16px] text-[#aaa] leading-[1.8] max-w-[550px] font-medium flex flex-col gap-6">
+              <p>
+                A colorist focused on creating cinematic visuals that elevate storytelling and bring creative visions to life. I specialize in transforming raw footage into polished, impactful imagery through thoughtful color grading and a strong understanding of visual language.
+              </p>
+              <p>
+                While color grading is my primary focus, I also offer editing support when needed, helping clients streamline their post-production process without relying on multiple creatives.
+              </p>
+              <p>
+                Based in India and working with clients worldwide, I create visuals that are not only refined and cinematic but also meaningful and memorable.
+              </p>
+            </div>
           </motion.div>
           <motion.div 
             className="w-full md:w-1/2 flex justify-start md:justify-end" 

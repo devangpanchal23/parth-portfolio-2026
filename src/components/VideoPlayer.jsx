@@ -2,7 +2,7 @@ import React, { useRef, useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Play, Pause, Volume2, VolumeX, Maximize, Minimize } from 'lucide-react';
 
-export default function VideoPlayer({ videoSrc, posterImage, className = "aspect-video", autoPlay = false }) {
+export default function VideoPlayer({ videoSrc, posterImage, className = "aspect-video", autoPlay = false, ignoreVerticalSizing = false }) {
   const videoRef = useRef(null);
   const containerRef = useRef(null);
   const controlsTimeoutRef = useRef(null);
@@ -15,6 +15,7 @@ export default function VideoPlayer({ videoSrc, posterImage, className = "aspect
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [showControls, setShowControls] = useState(true);
   const [isHovered, setIsHovered] = useState(false);
+  const [aspectRatio, setAspectRatio] = useState(null);
 
   // --- CONTROLS VISIBILITY LOGIC ---
   const handleMouseMove = useCallback(() => {
@@ -103,6 +104,11 @@ export default function VideoPlayer({ videoSrc, posterImage, className = "aspect
   const handleLoadedMetadata = () => {
     if (videoRef.current) {
       setDuration(videoRef.current.duration);
+      const width = videoRef.current.videoWidth;
+      const height = videoRef.current.videoHeight;
+      if (width && height) {
+        setAspectRatio(width / height);
+      }
       if (autoPlay) {
         videoRef.current.play().catch(e => console.log("Autoplay failed:", e));
       }
@@ -125,10 +131,18 @@ export default function VideoPlayer({ videoSrc, posterImage, className = "aspect
     return `${m}:${s.toString().padStart(2, '0')}`;
   };
 
+  const isVertical = !ignoreVerticalSizing && aspectRatio && aspectRatio < 1;
+  const verticalClasses = isVertical 
+    ? "mx-auto w-full max-w-[280px] sm:max-w-[300px] lg:max-w-[320px] xl:max-w-[360px]" 
+    : "";
+
   return (
     <motion.div
       ref={containerRef}
-      className={`relative overflow-hidden bg-black rounded-[4px] border border-white/5 shadow-[0_20px_60px_rgba(0,0,0,0.5)] group ${className}`}
+      className={`relative overflow-hidden bg-black rounded-[4px] border border-white/5 shadow-[0_20px_60px_rgba(0,0,0,0.5)] group ${className} ${verticalClasses}`}
+      style={{
+        aspectRatio: aspectRatio ? aspectRatio : undefined
+      }}
       initial={{ opacity: 0, y: 50 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-100px" }}
@@ -158,6 +172,23 @@ export default function VideoPlayer({ videoSrc, posterImage, className = "aspect
         onClick={(e) => e.stopPropagation()} // Let container handle the click
       />
 
+      {/* Center Play Button Overlay */}
+      <AnimatePresence>
+        {!isPlaying && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.8 }}
+            transition={{ duration: 0.2 }}
+            className="absolute inset-0 flex items-center justify-center bg-black/20 z-10 pointer-events-none"
+          >
+            <div className="w-16 h-16 rounded-full bg-black/60 backdrop-blur-sm border border-white/10 flex items-center justify-center text-white shadow-2xl transition-transform duration-300 group-hover:scale-110">
+              <Play size={28} fill="currentColor" className="ml-1" />
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
 
 
       {/* --- CUSTOM CONTROL BAR --- */}
@@ -170,6 +201,10 @@ export default function VideoPlayer({ videoSrc, posterImage, className = "aspect
             exit={{ opacity: 0, y: 10 }}
             transition={{ duration: 0.3 }}
             onClick={(e) => e.stopPropagation()} // Prevent toggling play when clicking controls
+            onMouseEnter={() => {
+              if (controlsTimeoutRef.current) clearTimeout(controlsTimeoutRef.current);
+            }}
+            onMouseLeave={handleMouseMove}
           >
             {/* Timeline Scrubber */}
             <div className="w-full group/scrubber relative h-1.5 bg-white/20 rounded-full cursor-pointer flex items-center">

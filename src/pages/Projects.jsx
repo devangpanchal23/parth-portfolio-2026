@@ -35,6 +35,7 @@ export const Projects = () => {
               </div>
               <div className="mt-4 flex flex-col gap-[6px]">
                 <h3 className="font-sans text-[20px] md:text-[28px] leading-[1.2] md:leading-[28px] font-medium text-white truncate">{project.title}</h3>
+                <p className="font-sans text-xs md:text-[14px] text-neutral-400 font-light leading-relaxed line-clamp-2 my-[2px]">{project.description}</p>
                 <p className="font-sans text-[10px] text-[#888] uppercase tracking-widest">{project.year} • {project.role}</p>
               </div>
             </div>

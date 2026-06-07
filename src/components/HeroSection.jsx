@@ -510,7 +510,6 @@ const HeroSection = ({ isPreloaderDone = true }) => {
               style={{ willChange: 'transform, opacity' }}
             >
               <img
-                src=""
                 alt=""
                 className="w-full h-full object-cover select-none"
               />
@@ -549,8 +548,8 @@ const HeroSection = ({ isPreloaderDone = true }) => {
             ref={subtextRef}
             className="text-xs md:text-sm lg:text-base uppercase tracking-[0.6em] md:tracking-[0.8em] font-medium text-white/90 leading-[2]"
           >
-            Cinematic Storytelling <br />
-            through Precision Editing
+            Emotion. Mood. Atmosphere. <br />
+            crafted through color
           </p>
         </div>
 
@@ -560,10 +559,14 @@ const HeroSection = ({ isPreloaderDone = true }) => {
           className="absolute top-0 left-0 w-full z-[2000] pointer-events-none p-6 md:p-10 flex justify-between items-start mix-blend-difference text-xs md:text-sm tracking-widest font-semibold uppercase text-gray-200"
         >
           {/* LEFT */}
-          <div className="flex flex-col gap-1 w-[60%] md:w-[30%] text-left nav-anim-item">
+          <button
+            onClick={() => window.location.reload()}
+            className="flex flex-col gap-1 w-[60%] md:w-[30%] text-left nav-anim-item bg-transparent border-0 p-0 cursor-pointer pointer-events-auto hover:opacity-75 transition-opacity duration-300 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-white/30 rounded text-xs md:text-sm tracking-widest font-semibold uppercase text-gray-200"
+            aria-label="Refresh page"
+          >
             <span className="text-white">PARTH PANCHAL</span>
-            <span className="text-white/40 text-[10px] md:text-xs">VIDEO EDITOR</span>
-          </div>
+            <span className="text-white/40 text-[10px] md:text-xs">COLORIST</span>
+          </button>
           
           {/* CENTER */}
           <div className="hidden md:flex justify-center gap-8 md:gap-12 w-[40%] text-white pointer-events-auto">
@@ -616,10 +619,14 @@ const HeroSection = ({ isPreloaderDone = true }) => {
         {/* Mobile Header Top Row */}
         <div className="absolute top-0 left-0 w-full p-6 flex justify-between items-center text-xs tracking-widest font-semibold uppercase text-gray-200 z-[60]">
           {/* LEFT: Premium stacked editorial nameplate */}
-          <div className="flex flex-col text-left select-none pointer-events-none leading-[0.9] font-sans font-medium tracking-[0.18em] text-[10px]">
+          <button
+            onClick={() => window.location.reload()}
+            className="flex flex-col text-left leading-[0.9] font-sans font-medium tracking-[0.18em] text-[10px] bg-transparent border-0 p-0 cursor-pointer pointer-events-auto hover:opacity-75 transition-opacity duration-300 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-white/30 rounded uppercase text-gray-200"
+            aria-label="Refresh page"
+          >
             <span className="text-white">PARTH</span>
             <span className="text-white/80">PANCHAL</span>
-          </div>
+          </button>
 
           {/* RIGHT: Hamburger Menu Button */}
           <div className="flex justify-end pointer-events-auto">
@@ -676,14 +683,14 @@ const HeroSection = ({ isPreloaderDone = true }) => {
             ))}
           </h1>
 
-          {/* Subtitle Label: Video Editor (with premium accent styling and luxurious spacing) */}
+          {/* Subtitle Label: Colorist (with premium accent styling and luxurious spacing) */}
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1.0, delay: 0.7, ease: [0.16, 1, 0.3, 1] }}
             className="text-[10px] md:text-[11px] tracking-[0.5em] font-medium text-white/50 uppercase mt-4 -mr-[0.5em]"
           >
-            Video Editor
+            Colorist
           </motion.div>
 
           {/* Tagline H3: Cinematic Storytelling through Precision Editing (luxurious spacing) */}
@@ -693,7 +700,7 @@ const HeroSection = ({ isPreloaderDone = true }) => {
             transition={{ duration: 1.2, delay: 0.9, ease: [0.16, 1, 0.3, 1] }}
             className="text-xs xs:text-sm md:text-base font-sans font-light text-white/80 leading-relaxed max-w-[340px] uppercase tracking-[0.18em] mt-8 text-center"
           >
-            Cinematic Storytelling <br className="hidden xs:block" /> through Precision Editing
+            Emotion. Mood. Atmosphere. <br className="hidden xs:block" /> crafted through color
           </motion.h3>
         </div>
 

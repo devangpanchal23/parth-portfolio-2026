@@ -73,7 +73,13 @@ export const Navbar = () => {
               delay: 0.2 
             }}
           >
-            <a href="/">Parth Panchal</a>
+            <button
+              onClick={() => window.location.reload()}
+              className="bg-transparent border-0 p-0 text-left text-xs md:text-sm tracking-widest font-semibold uppercase text-gray-200 cursor-pointer hover:opacity-75 transition-opacity duration-300 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-white/30 rounded"
+              aria-label="Refresh page"
+            >
+              Parth Panchal
+            </button>
           </motion.div>
 
           {/* DESKTOP NAV LINKS (hidden on mobile) */}

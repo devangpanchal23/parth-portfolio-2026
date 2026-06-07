@@ -172,101 +172,211 @@ export const ProjectDetail = ({ setIsImageHovered }) => {
         // Fallback to existing hero + sections rendering for backward compatibility
         <>
           {/* --- HERO MEDIA --- */}
-          <motion.section
-            className="w-full max-w-[1200px] mx-auto px-[15%] lg:px-12 pb-8 sm:pb-16 md:pb-24"
-            initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1, delay: 0.3 }}
-          >
-            <div
-              className="w-full overflow-hidden aspect-video bg-[#1a1a1a] border border-white/5 shadow-[0_20px_60px_rgba(0,0,0,0.5)] rounded-[4px] cursor-hover will-change-gpu"
-              onMouseEnter={() => setIsImageHovered && setIsImageHovered(true)} onMouseLeave={() => setIsImageHovered && setIsImageHovered(false)}
+          {!project.hideHero && (
+            <motion.section
+              className="w-full max-w-[960px] mx-auto px-[15%] lg:px-20 pb-8 sm:pb-16 md:pb-24"
+              initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1, delay: 0.3 }}
             >
-              <img src={project.heroImage} alt={project.title} className="w-full h-full object-cover" fetchPriority="high" />
-            </div>
-          </motion.section>
-
-          {/* --- MEDIA SECTIONS --- */}
-          {project.sections.map((section, idx) => (
-            <section key={idx} className="w-full max-w-[1200px] mx-auto px-[15%] lg:px-12 pb-8 sm:pb-16 md:pb-24">
-              {section.type === 'full' && (
-                <motion.div
-                  className="w-full overflow-hidden aspect-video sm:aspect-[16/10] bg-[#1a1a1a] border border-white/5 shadow-[0_20px_60px_rgba(0,0,0,0.5)] rounded-[4px] cursor-hover will-change-gpu"
-                  initial={{ opacity: 0, y: 35 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-100px" }} transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-                  onMouseEnter={() => setIsImageHovered && setIsImageHovered(true)} onMouseLeave={() => setIsImageHovered && setIsImageHovered(false)}
+              {project.heroVideo ? (
+                <div
+                  className="w-full cursor-hover will-change-gpu"
+                  onMouseEnter={() => setIsImageHovered && setIsImageHovered(true)}
+                  onMouseLeave={() => setIsImageHovered && setIsImageHovered(false)}
                 >
-                  <img src={section.src} className="w-full h-full object-cover" loading="lazy" alt="Project Shot" />
-                </motion.div>
-              )}
-
-              {section.type === 'compare' && (
-                <motion.div
-                  className={`w-full overflow-hidden bg-[#1a1a1a] border border-white/5 shadow-[0_20px_60px_rgba(0,0,0,0.5)] rounded-[4px] cursor-hover will-change-gpu ${getResponsiveAspect(section.aspect)}`}
-                  initial={{ opacity: 0, y: 35 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-100px" }} transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-                  onMouseEnter={() => setIsImageHovered && setIsImageHovered(true)} onMouseLeave={() => setIsImageHovered && setIsImageHovered(false)}
-                >
-                  <div className="w-full h-full relative group">
-                    <ImageCompareSlider
-                      beforeImage={section.before}
-                      afterImage={section.after}
-                      alt="Before and After Grade"
-                    />
-                  </div>
-                </motion.div>
-              )}
-
-              {section.type === 'video' && (
-                <div className="w-full cursor-hover will-change-gpu" onMouseEnter={() => setIsImageHovered && setIsImageHovered(true)} onMouseLeave={() => setIsImageHovered && setIsImageHovered(false)}>
                   <VideoPlayer
-                    videoSrc={section.src}
-                    posterImage={section.poster}
+                    videoSrc={project.heroVideo}
+                    posterImage={project.heroImage || ""}
                     className="w-full aspect-video"
+                    autoPlay={false}
                   />
                 </div>
-              )}
-
-              {section.type === 'youtube' && (
-                <div className="w-full cursor-hover will-change-gpu" onMouseEnter={() => setIsImageHovered && setIsImageHovered(true)} onMouseLeave={() => setIsImageHovered && setIsImageHovered(false)}>
-                  <ProjectVideo src={section.src} className="w-full aspect-video" />
+              ) : (
+                <div
+                  className="w-full overflow-hidden aspect-video bg-[#1a1a1a] border border-white/5 shadow-[0_20px_60px_rgba(0,0,0,0.5)] rounded-[4px] cursor-hover will-change-gpu"
+                  onMouseEnter={() => setIsImageHovered && setIsImageHovered(true)} onMouseLeave={() => setIsImageHovered && setIsImageHovered(false)}
+                >
+                  <img src={project.heroImage} alt={project.title} className="w-full h-full object-cover" fetchPriority="high" />
                 </div>
               )}
+            </motion.section>
+          )}
 
-              {section.type === 'grid' && (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-10">
+          {/* --- MEDIA SECTIONS --- */}
+          {project.sections.map((section, idx) => {
+            const isCustomGrid = section.type === 'grid-916' || section.type === 'grid-2x2';
+            const paddingClasses = isCustomGrid 
+              ? "px-6 md:px-12 lg:px-12" 
+              : "px-[15%] lg:px-12";
+              
+            return (
+              <section key={idx} className={`w-full max-w-[1200px] mx-auto pb-8 sm:pb-16 md:pb-24 ${paddingClasses}`}>
+                {section.type === 'full' && (
                   <motion.div
-                    className={`w-full overflow-hidden ${section.aspect ? getResponsiveAspect(section.aspect) : 'aspect-[4/3] sm:aspect-[4/5]'} bg-[#1a1a1a] border border-white/5 shadow-[0_20px_60px_rgba(0,0,0,0.5)] rounded-[4px] cursor-hover will-change-gpu`}
+                    className="w-full overflow-hidden aspect-video sm:aspect-[16/10] bg-[#1a1a1a] border border-white/5 shadow-[0_20px_60px_rgba(0,0,0,0.5)] rounded-[4px] cursor-hover will-change-gpu"
                     initial={{ opacity: 0, y: 35 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-100px" }} transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
                     onMouseEnter={() => setIsImageHovered && setIsImageHovered(true)} onMouseLeave={() => setIsImageHovered && setIsImageHovered(false)}
                   >
-                    {section.isVideo ? (
-                      <VideoPlayer 
-                        videoSrc={section.src1} 
-                        posterImage={section.poster1} 
-                        className="w-full h-full"
-                        autoPlay={false}
-                      />
-                    ) : (
-                      <img src={section.src1} className="w-full h-full object-cover" loading="lazy" alt="Project Shot" />
-                    )}
+                    <img src={section.src} className="w-full h-full object-cover" loading="lazy" alt="Project Shot" />
                   </motion.div>
+                )}
+
+                {section.type === 'compare' && (
                   <motion.div
-                    className={`w-full overflow-hidden ${section.aspect ? getResponsiveAspect(section.aspect) : 'aspect-[4/3] sm:aspect-[4/5]'} bg-[#1a1a1a] border border-white/5 shadow-[0_20px_60px_rgba(0,0,0,0.5)] rounded-[4px] cursor-hover will-change-gpu`}
-                    initial={{ opacity: 0, y: 35 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-100px" }} transition={{ duration: 0.8, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
+                    className={`w-full overflow-hidden bg-[#1a1a1a] border border-white/5 shadow-[0_20px_60px_rgba(0,0,0,0.5)] rounded-[4px] cursor-hover will-change-gpu ${getResponsiveAspect(section.aspect)}`}
+                    initial={{ opacity: 0, y: 35 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-100px" }} transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
                     onMouseEnter={() => setIsImageHovered && setIsImageHovered(true)} onMouseLeave={() => setIsImageHovered && setIsImageHovered(false)}
                   >
-                    {section.isVideo ? (
-                      <VideoPlayer 
-                        videoSrc={section.src2} 
-                        posterImage={section.poster2} 
-                        className="w-full h-full"
-                        autoPlay={false}
+                    <div className="w-full h-full relative group">
+                      <ImageCompareSlider
+                        beforeImage={section.before}
+                        afterImage={section.after}
+                        alt="Before and After Grade"
                       />
-                    ) : (
-                      <img src={section.src2} className="w-full h-full object-cover" loading="lazy" alt="Project Shot" />
-                    )}
+                    </div>
                   </motion.div>
-                </div>
-              )}
-            </section>
-          ))}
+                )}
+
+                {section.type === 'split' && (
+                  <motion.div
+                    className={`w-full overflow-hidden bg-[#1a1a1a] border border-white/5 shadow-[0_20px_60px_rgba(0,0,0,0.5)] rounded-[4px] cursor-hover will-change-gpu ${getResponsiveAspect(section.aspect)}`}
+                    initial={{ opacity: 0, y: 35 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-100px" }} transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+                    onMouseEnter={() => setIsImageHovered && setIsImageHovered(true)} onMouseLeave={() => setIsImageHovered && setIsImageHovered(false)}
+                  >
+                    <div className="w-full h-full flex">
+                      <div className="flex-1 h-full overflow-hidden">
+                        <img src={section.left} className="w-full h-full object-cover" alt="Before" loading="lazy" />
+                      </div>
+                      <div className="flex-1 h-full overflow-hidden">
+                        <img src={section.right} className="w-full h-full object-cover" alt="After" loading="lazy" />
+                      </div>
+                    </div>
+                  </motion.div>
+                )}
+
+                {section.type === 'video' && (
+                  <div className="w-full cursor-hover will-change-gpu" onMouseEnter={() => setIsImageHovered && setIsImageHovered(true)} onMouseLeave={() => setIsImageHovered && setIsImageHovered(false)}>
+                    <VideoPlayer
+                      videoSrc={section.src}
+                      posterImage={section.poster}
+                      className="w-full aspect-video"
+                    />
+                  </div>
+                )}
+
+                {section.type === 'youtube' && (
+                  <div className="w-full cursor-hover will-change-gpu" onMouseEnter={() => setIsImageHovered && setIsImageHovered(true)} onMouseLeave={() => setIsImageHovered && setIsImageHovered(false)}>
+                    <ProjectVideo src={section.src} className="w-full aspect-video" />
+                  </div>
+                )}
+
+                {section.type === 'grid' && (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-10">
+                    <motion.div
+                      className={`w-full overflow-hidden ${section.aspect ? getResponsiveAspect(section.aspect) : 'aspect-[4/3] sm:aspect-[4/5]'} bg-[#1a1a1a] border border-white/5 shadow-[0_20px_60px_rgba(0,0,0,0.5)] rounded-[4px] cursor-hover will-change-gpu`}
+                      initial={{ opacity: 0, y: 35 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-100px" }} transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+                      onMouseEnter={() => setIsImageHovered && setIsImageHovered(true)} onMouseLeave={() => setIsImageHovered && setIsImageHovered(false)}
+                    >
+                      {section.isVideo ? (
+                        <VideoPlayer 
+                          videoSrc={section.src1} 
+                          posterImage={section.poster1} 
+                          className="w-full h-full"
+                          autoPlay={false}
+                        />
+                      ) : (
+                        <img src={section.src1} className="w-full h-full object-cover" loading="lazy" alt="Project Shot" />
+                      )}
+                    </motion.div>
+                    <motion.div
+                      className={`w-full overflow-hidden ${section.aspect ? getResponsiveAspect(section.aspect) : 'aspect-[4/3] sm:aspect-[4/5]'} bg-[#1a1a1a] border border-white/5 shadow-[0_20px_60px_rgba(0,0,0,0.5)] rounded-[4px] cursor-hover will-change-gpu`}
+                      initial={{ opacity: 0, y: 35 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-100px" }} transition={{ duration: 0.8, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
+                      onMouseEnter={() => setIsImageHovered && setIsImageHovered(true)} onMouseLeave={() => setIsImageHovered && setIsImageHovered(false)}
+                    >
+                      {section.isVideo ? (
+                        <VideoPlayer 
+                          videoSrc={section.src2} 
+                          posterImage={section.poster2} 
+                          className="w-full h-full"
+                          autoPlay={false}
+                        />
+                      ) : (
+                        <img src={section.src2} className="w-full h-full object-cover" loading="lazy" alt="Project Shot" />
+                      )}
+                    </motion.div>
+                  </div>
+                )}
+
+                {section.type === 'grid-916' && (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 w-full max-w-[1200px] mx-auto">
+                    {section.items.map((item, itemIdx) => {
+                      if (item.type === 'video') {
+                        return (
+                          <div
+                            key={itemIdx}
+                            className="w-full aspect-[9/16] cursor-hover will-change-gpu"
+                            onMouseEnter={() => setIsImageHovered && setIsImageHovered(true)}
+                            onMouseLeave={() => setIsImageHovered && setIsImageHovered(false)}
+                          >
+                            <VideoPlayer
+                              videoSrc={item.src}
+                              posterImage={item.poster || ""}
+                              className="w-full h-full aspect-[9/16]"
+                              autoPlay={false}
+                              ignoreVerticalSizing={true}
+                            />
+                          </div>
+                        );
+                      } else {
+                        return (
+                          <motion.div
+                            key={itemIdx}
+                            className="w-full aspect-[9/16] overflow-hidden bg-[#1a1a1a] border border-white/5 shadow-[0_20px_60px_rgba(0,0,0,0.5)] rounded-[4px] cursor-hover will-change-gpu relative group"
+                            initial={{ opacity: 0, y: 35 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true, margin: '-100px' }}
+                            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+                            onMouseEnter={() => setIsImageHovered && setIsImageHovered(true)}
+                            onMouseLeave={() => setIsImageHovered && setIsImageHovered(false)}
+                          >
+                            <img
+                              src={item.src}
+                              alt="Project Shot"
+                              className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.02]"
+                              loading="lazy"
+                            />
+                          </motion.div>
+                        );
+                      }
+                    })}
+                  </div>
+                )}
+
+                {section.type === 'grid-2x2' && (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-6 md:gap-8 w-full max-w-[1200px] mx-auto">
+                    {section.items.map((item, itemIdx) => (
+                      <motion.div
+                        key={itemIdx}
+                        className="w-full aspect-video overflow-hidden bg-[#1a1a1a] border border-white/5 shadow-[0_20px_60px_rgba(0,0,0,0.5)] rounded-[4px] cursor-hover will-change-gpu relative group"
+                        initial={{ opacity: 0, y: 35 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true, margin: '-100px' }}
+                        transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+                        onMouseEnter={() => setIsImageHovered && setIsImageHovered(true)}
+                        onMouseLeave={() => setIsImageHovered && setIsImageHovered(false)}
+                      >
+                        <img
+                          src={typeof item === 'string' ? item : item.src}
+                          alt="Project Shot"
+                          className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.02]"
+                          loading="lazy"
+                        />
+                      </motion.div>
+                    ))}
+                  </div>
+                )}
+              </section>
+            );
+          })}
         </>
       )}
 
