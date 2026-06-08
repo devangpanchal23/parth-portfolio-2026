@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { projectsData } from '../data';
@@ -8,11 +8,41 @@ import ImageCompareSlider from '../components/ImageCompareSlider';
 import VideoPlayer from '../components/VideoPlayer';
 import ProjectVideo from '../components/ProjectVideo';
 
+const getEmbedSrc = (url = '', { autoplay = false } = {}) => {
+  if (!url) return '';
+
+  // Normalize common ScreenPal share/player links to embeddable player URLs
+  if (url.includes('screenpal.com')) {
+    const idMatch = url.match(/\/(?:player|watch)\/([^?&#/]+)/i);
+    const videoId = idMatch?.[1];
+
+    if (videoId) {
+      const params = new URLSearchParams({ embed: '1' });
+      if (autoplay) {
+        params.set('autoplay', '1');
+      }
+      return `https://go.screenpal.com/player/${videoId}?${params.toString()}`;
+    }
+  }
+
+  try {
+    const parsed = new URL(url);
+    if (autoplay) {
+      parsed.searchParams.set('autoplay', '1');
+    }
+    return parsed.toString();
+  } catch {
+    // keep original URL if parsing fails
+  }
+
+  return url;
+};
+
 // Optimized helper to map media to compact, low-height widescreen aspect ratios specifically on mobile devices
 const getResponsiveAspect = (aspectClass) => {
   if (!aspectClass) return 'aspect-video sm:aspect-[16/10]';
   const clean = aspectClass.trim();
-  
+
   if (clean.includes('21/9')) {
     return 'aspect-[2.39/1] xs:aspect-[21/9]';
   }
@@ -28,7 +58,7 @@ const getResponsiveAspect = (aspectClass) => {
   if (clean.includes('4/5')) {
     return 'aspect-video sm:aspect-[4/5]';
   }
-  
+
   return clean;
 };
 
@@ -36,6 +66,7 @@ export const ProjectDetail = ({ setIsImageHovered }) => {
   const { slug } = useParams();
   const navigate = useNavigate();
   const project = projectsData[slug];
+  const [loadedEmbeds, setLoadedEmbeds] = useState({});
 
   // Global scroll restoration using Lenis
   useEffect(() => {
@@ -58,6 +89,10 @@ export const ProjectDetail = ({ setIsImageHovered }) => {
   const projectKeys = Object.keys(projectsData);
   const currentIndex = projectKeys.indexOf(slug);
   const nextSlug = projectKeys[(currentIndex + 1) % projectKeys.length];
+
+  const activateEmbed = (embedKey) => {
+    setLoadedEmbeds((prev) => ({ ...prev, [embedKey]: true }));
+  };
 
   return (
     <div className="w-full relative bg-[#0A0A0A] text-white">
@@ -150,16 +185,60 @@ export const ProjectDetail = ({ setIsImageHovered }) => {
           }
 
           // Render video
-          if (item.type === 'video') {
+          // if (item.type === 'video') {
+          //   return (
+          //     <section key={idx} className="w-full max-w-[1200px] mx-auto px-[15%] lg:px-12 pb-8 sm:pb-16 md:pb-24">
+          //       <div className="w-full cursor-hover will-change-gpu" onMouseEnter={() => setIsImageHovered && setIsImageHovered(true)} onMouseLeave={() => setIsImageHovered && setIsImageHovered(false)}>
+          //         <VideoPlayer 
+          //           videoSrc={item.src}
+          //           posterImage={item.poster || ""}
+          //           className="w-full aspect-video"
+          //           autoPlay={false}
+          //         />
+          //       </div>
+          //     </section>
+          //   );
+          // }
+          if (item.type === 'embed') {
+            const embedKey = `${slug}-media-${idx}`;
+            const isLoaded = !!loadedEmbeds[embedKey];
+            const poster = item.poster || project.heroImage;
+
             return (
               <section key={idx} className="w-full max-w-[1200px] mx-auto px-[15%] lg:px-12 pb-8 sm:pb-16 md:pb-24">
-                <div className="w-full cursor-hover will-change-gpu" onMouseEnter={() => setIsImageHovered && setIsImageHovered(true)} onMouseLeave={() => setIsImageHovered && setIsImageHovered(false)}>
-                  <VideoPlayer 
-                    videoSrc={item.src}
-                    posterImage={item.poster || ""}
-                    className="w-full aspect-video"
-                    autoPlay={false}
-                  />
+                <div
+                  className="w-full overflow-hidden rounded-[4px] border border-white/5 shadow-[0_20px_60px_rgba(0,0,0,0.5)] cursor-hover will-change-gpu"
+                  onMouseEnter={() => setIsImageHovered && setIsImageHovered(true)}
+                  onMouseLeave={() => setIsImageHovered && setIsImageHovered(false)}
+                >
+                  <div className="relative w-full aspect-video bg-[#1a1a1a]">
+                    {!isLoaded && poster && (
+                      <button
+                        type="button"
+                        onClick={() => activateEmbed(embedKey)}
+                        className="absolute inset-0 z-10"
+                        aria-label="Play project video"
+                      >
+                        <img src={poster} alt={project.title} className="w-full h-full object-cover" loading="lazy" />
+                        <div className="absolute inset-0 bg-black/30" />
+                        <div className="absolute inset-0 flex items-center justify-center">
+                          <span className="w-16 h-16 rounded-full bg-[#0f1848]/90 border border-white/30 flex items-center justify-center text-white text-2xl">▶</span>
+                        </div>
+                      </button>
+                    )}
+
+                    {(isLoaded || !poster) && (
+                      <iframe
+                        src={getEmbedSrc(item.src, { autoplay: isLoaded })}
+                        title="Project Video"
+                        className="absolute inset-0 w-full h-full border-0"
+                        loading="lazy"
+                        allow="autoplay; fullscreen; picture-in-picture; clipboard-write"
+                        referrerPolicy="strict-origin-when-cross-origin"
+                        allowFullScreen
+                      />
+                    )}
+                  </div>
                 </div>
               </section>
             );
@@ -204,10 +283,10 @@ export const ProjectDetail = ({ setIsImageHovered }) => {
           {/* --- MEDIA SECTIONS --- */}
           {project.sections.map((section, idx) => {
             const isCustomGrid = section.type === 'grid-916' || section.type === 'grid-2x2';
-            const paddingClasses = isCustomGrid 
-              ? "px-6 md:px-12 lg:px-12" 
+            const paddingClasses = isCustomGrid
+              ? "px-6 md:px-12 lg:px-12"
               : "px-[15%] lg:px-12";
-              
+
             return (
               <section key={idx} className={`w-full max-w-[1200px] mx-auto pb-8 sm:pb-16 md:pb-24 ${paddingClasses}`}>
                 {section.type === 'full' && (
@@ -269,6 +348,51 @@ export const ProjectDetail = ({ setIsImageHovered }) => {
                   </div>
                 )}
 
+                {section.type === 'embed' && (
+                  (() => {
+                    const embedKey = `${slug}-section-${idx}`;
+                    const isLoaded = !!loadedEmbeds[embedKey];
+                    const poster = section.poster || project.heroImage;
+
+                    return (
+                      <div
+                        className="w-full overflow-hidden rounded-[4px] border border-white/5 shadow-[0_20px_60px_rgba(0,0,0,0.5)] cursor-hover will-change-gpu"
+                        onMouseEnter={() => setIsImageHovered && setIsImageHovered(true)}
+                        onMouseLeave={() => setIsImageHovered && setIsImageHovered(false)}
+                      >
+                        <div className="relative w-full aspect-video bg-[#1a1a1a]">
+                          {!isLoaded && poster && (
+                            <button
+                              type="button"
+                              onClick={() => activateEmbed(embedKey)}
+                              className="absolute inset-0 z-10"
+                              aria-label="Play project video"
+                            >
+                              <img src={poster} alt={project.title} className="w-full h-full object-cover" loading="lazy" />
+                              <div className="absolute inset-0 bg-black/30" />
+                              <div className="absolute inset-0 flex items-center justify-center">
+                                <span className="w-16 h-16 rounded-full bg-[#0f1848]/90 border border-white/30 flex items-center justify-center text-white text-2xl">▶</span>
+                              </div>
+                            </button>
+                          )}
+
+                          {(isLoaded || !poster) && (
+                            <iframe
+                              src={getEmbedSrc(section.src, { autoplay: isLoaded })}
+                              title="Project Video"
+                              className="absolute inset-0 w-full h-full border-0"
+                              loading="lazy"
+                              allow="autoplay; fullscreen; picture-in-picture; clipboard-write"
+                              referrerPolicy="strict-origin-when-cross-origin"
+                              allowFullScreen
+                            />
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })()
+                )}
+
                 {section.type === 'grid' && (
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-10">
                     <motion.div
@@ -277,9 +401,9 @@ export const ProjectDetail = ({ setIsImageHovered }) => {
                       onMouseEnter={() => setIsImageHovered && setIsImageHovered(true)} onMouseLeave={() => setIsImageHovered && setIsImageHovered(false)}
                     >
                       {section.isVideo ? (
-                        <VideoPlayer 
-                          videoSrc={section.src1} 
-                          posterImage={section.poster1} 
+                        <VideoPlayer
+                          videoSrc={section.src1}
+                          posterImage={section.poster1}
                           className="w-full h-full"
                           autoPlay={false}
                         />
@@ -293,9 +417,9 @@ export const ProjectDetail = ({ setIsImageHovered }) => {
                       onMouseEnter={() => setIsImageHovered && setIsImageHovered(true)} onMouseLeave={() => setIsImageHovered && setIsImageHovered(false)}
                     >
                       {section.isVideo ? (
-                        <VideoPlayer 
-                          videoSrc={section.src2} 
-                          posterImage={section.poster2} 
+                        <VideoPlayer
+                          videoSrc={section.src2}
+                          posterImage={section.poster2}
                           className="w-full h-full"
                           autoPlay={false}
                         />
@@ -326,27 +450,69 @@ export const ProjectDetail = ({ setIsImageHovered }) => {
                             />
                           </div>
                         );
-                      } else {
+                      }
+
+                      if (item.type === 'embed') {
+                        const embedKey = `${slug}-grid916-${idx}-${itemIdx}`;
+                        const isLoaded = !!loadedEmbeds[embedKey];
+                        const poster = item.poster || project.heroImage;
+
                         return (
-                          <motion.div
+                          <div
                             key={itemIdx}
-                            className="w-full aspect-[9/16] overflow-hidden bg-[#1a1a1a] border border-white/5 shadow-[0_20px_60px_rgba(0,0,0,0.5)] rounded-[4px] cursor-hover will-change-gpu relative group"
-                            initial={{ opacity: 0, y: 35 }}
-                            whileInView={{ opacity: 1, y: 0 }}
-                            viewport={{ once: true, margin: '-100px' }}
-                            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+                            className="w-full aspect-[9/16] overflow-hidden bg-[#1a1a1a] border border-white/5 shadow-[0_20px_60px_rgba(0,0,0,0.5)] rounded-[4px] cursor-hover will-change-gpu relative"
                             onMouseEnter={() => setIsImageHovered && setIsImageHovered(true)}
                             onMouseLeave={() => setIsImageHovered && setIsImageHovered(false)}
                           >
-                            <img
-                              src={item.src}
-                              alt="Project Shot"
-                              className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.02]"
-                              loading="lazy"
-                            />
-                          </motion.div>
+                            {!isLoaded && poster && (
+                              <button
+                                type="button"
+                                onClick={() => activateEmbed(embedKey)}
+                                className="absolute inset-0 z-10"
+                                aria-label={`Play project video ${itemIdx + 1}`}
+                              >
+                                <img src={poster} alt={project.title} className="w-full h-full object-cover" loading="lazy" />
+                                <div className="absolute inset-0 bg-black/35" />
+                                <div className="absolute inset-0 flex items-center justify-center">
+                                  <span className="w-14 h-14 rounded-full bg-[#0f1848]/90 border border-white/30 flex items-center justify-center text-white text-xl">▶</span>
+                                </div>
+                              </button>
+                            )}
+
+                            {(isLoaded || !poster) && (
+                              <iframe
+                                src={getEmbedSrc(item.src, { autoplay: isLoaded })}
+                                title={`Project Embedded Video ${itemIdx + 1}`}
+                                className="absolute inset-0 w-full h-full border-0"
+                                loading="lazy"
+                                allow="autoplay; fullscreen; picture-in-picture; clipboard-write"
+                                referrerPolicy="strict-origin-when-cross-origin"
+                                allowFullScreen
+                              />
+                            )}
+                          </div>
                         );
                       }
+
+                      return (
+                        <motion.div
+                          key={itemIdx}
+                          className="w-full aspect-[9/16] overflow-hidden bg-[#1a1a1a] border border-white/5 shadow-[0_20px_60px_rgba(0,0,0,0.5)] rounded-[4px] cursor-hover will-change-gpu relative group"
+                          initial={{ opacity: 0, y: 35 }}
+                          whileInView={{ opacity: 1, y: 0 }}
+                          viewport={{ once: true, margin: '-100px' }}
+                          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+                          onMouseEnter={() => setIsImageHovered && setIsImageHovered(true)}
+                          onMouseLeave={() => setIsImageHovered && setIsImageHovered(false)}
+                        >
+                          <img
+                            src={item.src}
+                            alt="Project Shot"
+                            className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.02]"
+                            loading="lazy"
+                          />
+                        </motion.div>
+                      );
                     })}
                   </div>
                 )}
@@ -382,8 +548,8 @@ export const ProjectDetail = ({ setIsImageHovered }) => {
 
       {/* --- NEXT PROJECT CTA --- */}
       {nextSlug && (
-        <section 
-          className="w-full py-16 sm:py-24 md:py-36 border-t border-white/5 flex flex-col items-center justify-center text-center px-4 group cursor-pointer overflow-hidden bg-[#070707] hover:bg-[#0A0A0A] transition-colors duration-700 ease-out" 
+        <section
+          className="w-full py-16 sm:py-24 md:py-36 border-t border-white/5 flex flex-col items-center justify-center text-center px-4 group cursor-pointer overflow-hidden bg-[#070707] hover:bg-[#0A0A0A] transition-colors duration-700 ease-out"
           onClick={() => navigate(`/project/${nextSlug}`)}
         >
           <motion.div

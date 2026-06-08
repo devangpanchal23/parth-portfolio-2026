@@ -113,6 +113,20 @@ export const Home = ({ setIsImageHovered, isPreloaderDone }) => {
               viewport={{ once: true, margin: "-100px" }} 
               transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
             >
+              <ImageWithCursor
+                className="w-full overflow-hidden aspect-[16/10] bg-[#1a1a1a] cursor-hover relative"
+                onMouseEnter={() => setIsImageHovered && setIsImageHovered(true)}
+                onMouseLeave={() => setIsImageHovered && setIsImageHovered(false)}
+                onClick={() => navigate('/project/project-rock')}
+              >
+                <img
+                  src={projectsData["project-rock"]?.heroImage}
+                  alt={projectsData["project-rock"]?.title || "Urban Studio Commercial"}
+                  className="w-full h-full object-cover grayscale opacity-80 group-hover:grayscale-0 group-hover:scale-105 group-hover:opacity-100 transition-all duration-700 ease-out"
+                />
+                <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-10 transition-opacity duration-500 ease-out pointer-events-none" />
+              </ImageWithCursor>
+
               <div className="flex flex-col gap-[6px] mt-2">
                 <h3 className="font-sans text-[20px] md:text-[28px] leading-[1.2] md:leading-[28px] font-medium text-white">
                   {projectsData["project-rock"]?.title || "Under Armour x Project Rock"}

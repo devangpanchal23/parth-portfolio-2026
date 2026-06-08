@@ -4,7 +4,7 @@ import img2Before from "./media/img-2-before.png";
 import img2After from "./media/img-2-after.png";
 import img3Before from "./media/img-3-before.png";
 import img3After from "./media/img-3-after.png";
-import dreamsToRealityVideo from "./assets/videos/export.mov";
+// import dreamsToRealityVideo from "./assets/videos/export.mov";
 import img11 from "./assets/images/1.1.png";
 import img12 from "./assets/images/1.2.png";
 import img13 from "./assets/images/1.3.png";
@@ -14,7 +14,7 @@ import img22 from "./assets/images/2.2.png";
 import img31 from "./assets/images/3.1.png";
 import img32 from "./assets/images/3.2.png";
 import img33 from "./assets/images/3.3.png";
-import commercialLookVideo from "./assets/videos/Commercial Look.mov";
+// import commercialLookVideo from "./assets/videos/Commercial Look.mov";
 
 export const projectsData = {
   "canada-goose": {
@@ -53,7 +53,11 @@ experience.`,
       {
         type: "grid-916",
         items: [
-          { type: "video", src: dreamsToRealityVideo, poster: "" },
+          {
+            type: "embed",
+            src: "https://go.screenpal.com/player/cO1j1vnuqdc?ff=1&ahc=1&dcc=1&tl=1&bg=transparent&share=1&download=1&embed=1&cl=1",
+            poster: img21
+          },
           { type: "image", src: img21 },
           { type: "image", src: img22 }
         ]
@@ -68,12 +72,17 @@ experience.`,
     year: "2026",
     role: "Colorist",
     deliverables: "Color Grading / Look Development / Film Emulation",
+    heroImage: img33,
     description: `A fashion commercial crafted to showcase the brand’s style and identity. The
 color grade combines clean, polished visuals with subtle film-inspired tones to
 create a premium and cinematic look..`,
     hideHero: true,
     sections: [
-      { type: "video", src: commercialLookVideo, poster: img31 },
+      {
+        type: "embed",
+        src: "https://go.screenpal.com/player/cO1j1vnuqJW?ff=1&ahc=1&dcc=1&tl=1&bg=transparent&share=1&download=1&embed=1&cl=1",
+        poster: img33
+      },
       { type: "full", src: img32 },
       { type: "full", src: img33 },
       { type: "full", src: img31 },

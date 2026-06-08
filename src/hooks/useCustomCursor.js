@@ -132,6 +132,27 @@ export const useCustomCursor = (isActive = false) => {
       // Update absolute target position
       targetPositionRef.current = { x: e.clientX, y: e.clientY };
 
+      const isIframeTarget = e.target && (
+        e.target.tagName === 'IFRAME' ||
+        (e.target.closest && e.target.closest('iframe'))
+      );
+
+      // Cross-origin iframes (e.g. embedded video players) swallow mouse events,
+      // so we disable the custom cursor there to avoid a frozen cursor state.
+      if (isIframeTarget) {
+        if (isHoveringRef.current) {
+          handleMouseLeave();
+        }
+
+        if (!animationFrameRef.current && cursorRef.current) {
+          cursorRef.current.style.display = 'block';
+          if (animateRef.current) {
+            animationFrameRef.current = requestAnimationFrame(animateRef.current);
+          }
+        }
+        return;
+      }
+
       // Detect hovered element
       const el = e.target && e.target.closest ? e.target.closest('.cursor-hover') : null;
       if (el) {
@@ -165,9 +186,14 @@ export const useCustomCursor = (isActive = false) => {
       if (x === 0 && y === 0) return;
 
       const el = document.elementFromPoint(x, y);
+      const isIframeTarget = el && el.tagName === 'IFRAME';
       const hoveredEl = el && el.closest ? el.closest('.cursor-hover') : null;
 
-      if (hoveredEl) {
+      if (isIframeTarget) {
+        if (isHoveringRef.current) {
+          handleMouseLeave();
+        }
+      } else if (hoveredEl) {
         if (!isHoveringRef.current) {
           handleMouseEnter(hoveredEl);
         }
