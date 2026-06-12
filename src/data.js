@@ -15,6 +15,8 @@ import img31 from "./assets/images/3.1.png";
 import img32 from "./assets/images/3.2.png";
 import img33 from "./assets/images/3.3.png";
 // import commercialLookVideo from "./assets/videos/Commercial Look.mov";
+import lostDreamBanner from "./assets/images/lost_dream_banner.jpg";
+import dreamsRealityBanner from "./assets/images/dreams_reality_banner.jpg";
 
 export const projectsData = {
   "canada-goose": {
@@ -27,7 +29,7 @@ export const projectsData = {
 The color grade was crafted to enhance the emotional journey of the story,
     using subtle tonal shifts, contrast, and color separation to reinforce mood and
     character progression while maintaining a cinematic visual identity.`,
-    heroImage: "https://images.unsplash.com/photo-1601004890684-d8cbf643f5f2?w=1600&q=80",
+    heroImage: lostDreamBanner,
     hideHero: true,
     sections: [
       {
@@ -47,7 +49,7 @@ The color grade was crafted to enhance the emotional journey of the story,
     description: `A travel-driven narrative following a creator’s path from aspiration to
 achievement.The grading focused on creating a cohesive and cinematic visual
 experience.`,
-    heroImage: "https://images.unsplash.com/photo-1622483767028-3f66f32aef97?w=1600&q=80",
+    heroImage: dreamsRealityBanner,
     hideHero: true,
     sections: [
       {
@@ -55,7 +57,7 @@ experience.`,
         items: [
           {
             type: "embed",
-            src: "https://go.screenpal.com/player/cO1j1vnuqdc?ff=1&ahc=1&dcc=1&tl=1&bg=transparent&share=1&download=1&embed=1&cl=1",
+            src: "https://player.vimeo.com/video/1200485465?title=0&byline=0&portrait=0&badge=0&autopause=0&player_id=0&app_id=58479",
             poster: img21
           },
           { type: "image", src: img21 },
@@ -80,7 +82,7 @@ create a premium and cinematic look..`,
     sections: [
       {
         type: "embed",
-        src: "https://go.screenpal.com/player/cO1j1vnuqJW?ff=1&ahc=1&dcc=1&tl=1&bg=transparent&share=1&download=1&embed=1&cl=1",
+        src: "https://player.vimeo.com/video/1200485230?title=0&byline=0&portrait=0&badge=0&autopause=0&player_id=0&app_id=58479",
         poster: img33
       },
       { type: "full", src: img32 },
@@ -89,71 +91,6 @@ create a premium and cinematic look..`,
     ],
     nextSlug: "leaf-moon",
     nextTitle: "A Leaf From The Moon"
-  },
-  "ea-fc": {
-    title: "EA FC 25: Ultimate Edition",
-    client: "EA Sports",
-    year: "2024",
-    role: "Editor",
-    deliverables: "Video Editing / Promo",
-    description: "A high-energy promotional campaign for EA FC 25 focusing on cinematic gameplay and emotional hooks.",
-    heroImage: "https://images.unsplash.com/photo-1587329310686-91414b8e3cb7?w=1600&q=80",
-    sections: [
-      { type: "full", src: "https://images.unsplash.com/photo-1587329310686-91414b8e3cb7?w=2000&q=80" },
-      { type: "compare", before: "https://images.unsplash.com/photo-1587329310686-91414b8e3cb7?w=1600&q=80&sat=-40&con=-10", after: "https://images.unsplash.com/photo-1587329310686-91414b8e3cb7?w=1600&q=80&sat=30&con=20", aspect: "aspect-video" },
-      { type: "video", src: "https://videos.pexels.com/video-files/853889/853889-hd_1920_1080_25fps.mp4", poster: "https://images.unsplash.com/photo-1587329310686-91414b8e3cb7?w=2000&q=80" },
-    ],
-    nextSlug: "project-rock",
-    nextTitle: "Under Armour x Project Rock"
-  },
-  "leaf-moon": {
-    title: "A Leaf From The Moon",
-    client: "Short Film",
-    year: "2024",
-    role: "Director / Editor",
-    deliverables: "Editing",
-    description: "A surreal indie narrative film exploring human connection through beautiful cinematic sequences.",
-    heroImage: "https://images.unsplash.com/photo-1542204165-65bf26472b9b?w=2000&q=80",
-    sections: [
-      { type: "compare", before: img3Before, after: img3After, aspect: "aspect-[24/9]" },
-      { type: "video", src: "https://videos.pexels.com/video-files/5199624/5199624-uhd_3840_2160_24fps.mp4", poster: "https://images.unsplash.com/photo-1542204165-65bf26472b9b?w=2000&q=80" }
-    ],
-    nextSlug: "midnight-drive",
-    nextTitle: "Midnight Drive"
-  },
-  "midnight-drive": {
-    title: "Midnight Drive",
-    client: "Luxury Automotive",
-    year: "2024",
-    role: "Video Editor / Motion Graphics",
-    deliverables: "Cinematic Commercial Edit",
-    description: "A fast-paced cinematic commercial edit focused on luxury automotive visuals, dramatic transitions, speed ramping, motion blur effects, and high-energy sound synchronization. Designed to create a premium advertisement-style viewing experience with smooth storytelling and intense visual pacing.",
-    heroImage: "https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?w=1600&q=80",
-    software: ["Adobe Premiere Pro", "After Effects", "DaVinci Resolve"],
-    highlights: ["Cinematic color grading", "Speed ramp transitions", "Motion blur effects", "Beat-synced editing", "Smooth text animations", "High-end commercial pacing"],
-    sections: [
-      { type: "video", src: "https://videos.pexels.com/video-files/3206020/3206020-uhd_2560_1440_25fps.mp4", poster: "https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?w=1600&q=80" },
-      { type: "full", src: "https://images.unsplash.com/photo-1622483767028-3f66f32aef97?w=2000&q=80" },
-    ],
-    nextSlug: "echo-frames",
-    nextTitle: "Echo Frames"
-  },
-  "echo-frames": {
-    title: "Echo Frames",
-    client: "Music Artist",
-    year: "2024",
-    role: "Editor / VFX Artist",
-    deliverables: "Music Video Editing",
-    description: "A stylish music video editing project focused on rhythm-based cuts, cinematic storytelling, glowing visual effects, smooth transitions, and immersive scene blending. The edit should feel emotionally engaging with a modern creative direction and polished visual atmosphere.",
-    heroImage: "https://images.unsplash.com/photo-1542204165-65bf26472b9b?w=2000&q=80",
-    software: ["After Effects", "Premiere Pro", "Blender"],
-    highlights: ["Beat-synced transitions", "Glow & light effects", "Cinematic storytelling", "Smooth scene blending", "Creative motion graphics", "Professional color correction"],
-    sections: [
-      { type: "video", src: "https://videos.pexels.com/video-files/5199624/5199624-uhd_3840_2160_24fps.mp4", poster: "https://images.unsplash.com/photo-1542204165-65bf26472b9b?w=2000&q=80" },
-      { type: "full", src: "https://images.unsplash.com/photo-1587329310686-91414b8e3cb7?w=2000&q=80" },
-    ],
-    nextSlug: "canada-goose",
-    nextTitle: "Canada Goose: Heritage & Craftsmanship"
   }
 };
 

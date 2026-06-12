@@ -6,6 +6,10 @@ import { Footer } from '../components/Footer';
 import ImageWithCursor from '../components/ImageWithCursor';
 import { Skeleton } from 'boneyard-js/react';
 import { projectsData } from '../data';
+import parth1 from '../assets/images/parth1.jpg';
+import parth2 from '../assets/images/parth2.jpg';
+import lostDreamBanner from '../assets/images/lost_dream_banner.jpg';
+import dreamsRealityBanner from '../assets/images/dreams_reality_banner.jpg';
 
 export const Home = ({ setIsImageHovered, isPreloaderDone }) => {
   const navigate = useNavigate();
@@ -49,8 +53,8 @@ export const Home = ({ setIsImageHovered, isPreloaderDone }) => {
                 onClick={() => navigate('/project/canada-goose')}
               >
                 <img 
-                  src="https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?w=1200&q=80" 
-                  alt="Canada Goose" 
+                  src={lostDreamBanner} 
+                  alt="The Lost Dream Project" 
                   className="w-full h-full object-cover grayscale opacity-80 group-hover:grayscale-0 group-hover:scale-105 group-hover:opacity-100 transition-all duration-700 ease-out" 
                 />
                 <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-10 transition-opacity duration-500 ease-out pointer-events-none" />
@@ -83,8 +87,8 @@ export const Home = ({ setIsImageHovered, isPreloaderDone }) => {
                 onClick={() => navigate('/project/pepsi-generation')}
               >
                 <img 
-                  src="https://images.unsplash.com/photo-1493246507139-91e8fad9978e?w=1600&q=80" 
-                  alt="Pepsi" 
+                  src={dreamsRealityBanner} 
+                  alt="From Dreams to Reality" 
                   className="w-full h-full object-cover grayscale opacity-80 group-hover:grayscale-0 group-hover:scale-105 group-hover:opacity-100 transition-all duration-700 ease-out" 
                 />
                 <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-10 transition-opacity duration-500 ease-out pointer-events-none" />
@@ -105,7 +109,7 @@ export const Home = ({ setIsImageHovered, isPreloaderDone }) => {
           {/* SECOND ROW */}
           <div className="flex flex-col md:flex-row gap-8 lg:gap-12 w-full mt-12 md:mt-24">
             {/* Under Armour */}
-            <Skeleton name="home-work-underarmour" loading={isLoading} className="w-full md:w-[65%]">
+            <Skeleton name="home-work-underarmour" loading={isLoading} className="w-full">
             <motion.div
               className="w-full flex flex-col gap-4 group"
               initial={{ opacity: 0, y: 60, filter: "blur(10px)" }} 
@@ -135,40 +139,6 @@ export const Home = ({ setIsImageHovered, isPreloaderDone }) => {
                   {projectsData["project-rock"]?.description}
                 </p>
                 <p className="font-sans text-[10px] text-[#888] tracking-widest uppercase font-semibold">Sport / Cinematic</p>
-              </div>
-            </motion.div>
-            </Skeleton>
-
-            {/* EA FC 25 */}
-            <Skeleton name="home-work-eafc" loading={isLoading} className="w-full md:w-[35%]">
-            <motion.div
-              className="w-full flex flex-col gap-4 group"
-              initial={{ opacity: 0, y: 60, filter: "blur(10px)" }} 
-              whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }} 
-              viewport={{ once: true, margin: "-100px" }} 
-              transition={{ duration: 1, ease: [0.16, 1, 0.3, 1], delay: 0.15 }}
-            >
-              <ImageWithCursor 
-                className="w-full overflow-hidden aspect-video bg-[#1a1a1a] cursor-hover relative"
-                onMouseEnter={() => setIsImageHovered && setIsImageHovered(true)} 
-                onMouseLeave={() => setIsImageHovered && setIsImageHovered(false)}
-                onClick={() => navigate('/project/ea-fc')}
-              >
-                <img 
-                  src="https://images.unsplash.com/photo-1542204165-65bf26472b9b?w=1600&q=80" 
-                  alt="EA FC" 
-                  className="w-full h-full object-cover grayscale opacity-80 group-hover:grayscale-0 group-hover:scale-105 group-hover:opacity-100 transition-all duration-700 ease-out" 
-                />
-                <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-10 transition-opacity duration-500 ease-out pointer-events-none" />
-              </ImageWithCursor>
-              <div className="flex flex-col gap-[6px] mt-2">
-                <h3 className="font-sans text-[20px] md:text-[28px] leading-[1.2] md:leading-[28px] font-medium text-white">
-                  {projectsData["ea-fc"]?.title || "EA FC 25: Ultimate Edition"}
-                </h3>
-                <p className="font-sans text-xs md:text-[14px] text-neutral-400 font-light leading-relaxed max-w-[90%] line-clamp-2 my-[2px]">
-                  {projectsData["ea-fc"]?.description}
-                </p>
-                <p className="font-sans text-[10px] text-[#888] tracking-widest uppercase font-semibold">Gaming / Motion</p>
               </div>
             </motion.div>
             </Skeleton>
@@ -217,14 +187,19 @@ export const Home = ({ setIsImageHovered, isPreloaderDone }) => {
           >
             <Skeleton name="home-about-image" loading={isLoading} className="w-full md:w-[90%] lg:w-[700px]">
             <ImageWithCursor 
-              className="w-full overflow-hidden bg-[#1a1a1a] cursor-hover rounded-[2px]" 
+              className="w-full overflow-hidden bg-[#1a1a1a] cursor-hover rounded-[2px] relative group" 
               onMouseEnter={() => setIsImageHovered && setIsImageHovered(true)} 
               onMouseLeave={() => setIsImageHovered && setIsImageHovered(false)}
             >
               <img 
-                src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=800&q=80" 
+                src={parth1} 
                 alt="Parth Panchal" 
-                className="w-full h-auto aspect-[3/4] object-cover grayscale opacity-90 hover:grayscale-0 hover:opacity-100 hover:scale-105 transition-all duration-700 ease-out" 
+                className="w-full h-auto aspect-[3/4] object-cover grayscale opacity-90 group-hover:opacity-0 transition-all duration-700 ease-out" 
+              />
+              <img 
+                src={parth2} 
+                alt="Parth Panchal Hover" 
+                className="w-full h-full absolute inset-0 object-cover opacity-0 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700 ease-out" 
               />
             </ImageWithCursor>
             </Skeleton>

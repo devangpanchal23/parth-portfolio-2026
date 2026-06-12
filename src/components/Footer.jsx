@@ -36,10 +36,10 @@ export const Footer = () => {
               viewport={{ once: true }}
               transition={{ duration: 0.8, delay: 0.2 }}
             >
-              {/* <a href="https://www.instagram.com/parthh.films?igsh=MW42bWc3dnc5czJ2cg%3D%3D" className="text-[9px] md:text-[10px] lg:text-[11px] text-[#A1A1A1] uppercase tracking-widest font-semibold hover:text-white transition-colors cursor-pointer block">Instagram</a> */}
-              <a href="#" className="text-[9px] md:text-[10px] lg:text-[11px] text-[#A1A1A1] uppercase tracking-widest font-semibold hover:text-white transition-colors cursor-pointer block">Instagram</a>
-              <a href="#" className="text-[9px] md:text-[10px] lg:text-[11px] text-[#A1A1A1] uppercase tracking-widest font-semibold hover:text-white transition-colors cursor-pointer block">LinkedIn</a>
-              <a href="#" className="text-[9px] md:text-[10px] lg:text-[11px] text-[#A1A1A1] uppercase tracking-widest font-semibold hover:text-white transition-colors cursor-pointer block">Email</a>
+
+              <a href="https://www.instagram.com/parthh.films" target="_blank" rel="noopener noreferrer" className="text-[9px] md:text-[10px] lg:text-[11px] text-[#A1A1A1] uppercase tracking-widest font-semibold hover:text-white transition-colors cursor-pointer block">Instagram</a>
+              <a href="https://www.linkedin.com/in/parth-panchal29/" target="_blank" rel="noopener noreferrer" className="text-[9px] md:text-[10px] lg:text-[11px] text-[#A1A1A1] uppercase tracking-widest font-semibold hover:text-white transition-colors cursor-pointer block">LinkedIn</a>
+              <a href="mailto:Parth.media06@gmail.com" className="text-[9px] md:text-[10px] lg:text-[11px] text-[#A1A1A1] uppercase tracking-widest font-semibold hover:text-white transition-colors cursor-pointer block">Email</a>
               <div className="mt-4 md:mt-6 lg:mt-12 text-[8px] lg:text-[9px] text-[#555] tracking-widest uppercase font-semibold">2026 &copy; Parth Panchal</div>
             </motion.div>
             <motion.div

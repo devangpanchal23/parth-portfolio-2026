@@ -560,9 +560,9 @@ const HeroSection = ({ isPreloaderDone = true }) => {
         >
           {/* LEFT */}
           <button
-            onClick={() => window.location.reload()}
+            onClick={() => window.location.href = '/'}
             className="flex flex-col gap-1 w-[60%] md:w-[30%] text-left nav-anim-item bg-transparent border-0 p-0 cursor-pointer pointer-events-auto hover:opacity-75 transition-opacity duration-300 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-white/30 rounded text-xs md:text-sm tracking-widest font-semibold uppercase text-gray-200"
-            aria-label="Refresh page"
+            aria-label="Go to home page"
           >
             <span className="text-white">PARTH PANCHAL</span>
             <span className="text-white/40 text-[10px] md:text-xs">COLORIST</span>
@@ -620,9 +620,9 @@ const HeroSection = ({ isPreloaderDone = true }) => {
         <div className="absolute top-0 left-0 w-full p-6 flex justify-between items-center text-xs tracking-widest font-semibold uppercase text-gray-200 z-[60]">
           {/* LEFT: Premium stacked editorial nameplate */}
           <button
-            onClick={() => window.location.reload()}
+            onClick={() => window.location.href = '/'}
             className="flex flex-col text-left leading-[0.9] font-sans font-medium tracking-[0.18em] text-[10px] bg-transparent border-0 p-0 cursor-pointer pointer-events-auto hover:opacity-75 transition-opacity duration-300 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-white/30 rounded uppercase text-gray-200"
-            aria-label="Refresh page"
+            aria-label="Go to home page"
           >
             <span className="text-white">PARTH</span>
             <span className="text-white/80">PANCHAL</span>

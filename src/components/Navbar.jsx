@@ -74,9 +74,9 @@ export const Navbar = () => {
             }}
           >
             <button
-              onClick={() => window.location.reload()}
+              onClick={() => window.location.href = '/'}
               className="bg-transparent border-0 p-0 text-left text-xs md:text-sm tracking-widest font-semibold uppercase text-gray-200 cursor-pointer hover:opacity-75 transition-opacity duration-300 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-white/30 rounded"
-              aria-label="Refresh page"
+              aria-label="Go to home page"
             >
               Parth Panchal
             </button>
