@@ -1,7 +1,11 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import gsap from 'gsap';
 import EmailModal from './EmailModal';
+import { useMediaQuery } from '../hooks/useMediaQuery';
+import { useDismissiblePanel } from '../hooks/useDismissiblePanel';
+
+const DESKTOP_HERO_QUERY = '(min-width: 1024px)';
 
 /* ── Cinematic Image Config ────────────────────────────────────── */
 const IMAGES = [
@@ -84,10 +88,40 @@ const HeroSection = ({ isPreloaderDone = true }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isEmailModalOpen, setIsEmailModalOpen] = useState(false);
   const [isVideoPlaying, setIsVideoPlaying] = useState(false);
+  const mobileHeaderRef = useRef(null);
+  const menuPanelRef = useRef(null);
+  const menuTriggerRef = useRef(null);
+  const [mobileHeaderOffset, setMobileHeaderOffset] = useState(72);
+  const isDesktopHero = useMediaQuery(DESKTOP_HERO_QUERY);
 
-  // Toggle body overflow hidden on menu state toggles to prevent underlying page scrolling
+  const closeMenu = useCallback(() => setIsMenuOpen(false), []);
+  const toggleMenu = useCallback(() => setIsMenuOpen((prev) => !prev), []);
+
+  const { handleBackdropClick } = useDismissiblePanel({
+    isOpen: isMenuOpen,
+    onClose: closeMenu,
+    panelRef: menuPanelRef,
+    triggerRef: menuTriggerRef,
+    closeOnDesktop: true,
+    isDesktop: isDesktopHero,
+  });
+
+  // Measure mobile header height for panel positioning (prevents layout shifts)
   useEffect(() => {
-    if (isMenuOpen) {
+    const updateOffset = () => {
+      if (mobileHeaderRef.current) {
+        setMobileHeaderOffset(mobileHeaderRef.current.offsetHeight);
+      }
+    };
+
+    updateOffset();
+    window.addEventListener('resize', updateOffset);
+    return () => window.removeEventListener('resize', updateOffset);
+  }, []);
+
+  // Prevent underlying page scroll when mobile notification panel is open
+  useEffect(() => {
+    if (isMenuOpen && !isDesktopHero) {
       document.body.style.overflow = 'hidden';
     } else {
       document.body.style.overflow = '';
@@ -95,27 +129,26 @@ const HeroSection = ({ isPreloaderDone = true }) => {
     return () => {
       document.body.style.overflow = '';
     };
-  }, [isMenuOpen]);
+  }, [isMenuOpen, isDesktopHero]);
 
-  // Close on Escape key press
-  useEffect(() => {
-    const handleKeyDown = (e) => {
-      if (e.key === 'Escape') setIsMenuOpen(false);
-    };
-    if (isMenuOpen) window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isMenuOpen]);
-
-  const menuVariants = {
-    initial: { y: "-100%" },
-    animate: { 
+  const menuPanelVariants = {
+    initial: { opacity: 0, y: -12 },
+    animate: {
       y: 0,
-      transition: { duration: 0.55, ease: [0.16, 1, 0.3, 1] }
+      opacity: 1,
+      transition: { duration: 0.45, ease: [0.16, 1, 0.3, 1] },
     },
-    exit: { 
-      y: "-100%",
-      transition: { duration: 0.45, ease: [0.16, 1, 0.3, 1] }
-    }
+    exit: {
+      y: -12,
+      opacity: 0,
+      transition: { duration: 0.35, ease: [0.16, 1, 0.3, 1] },
+    },
+  };
+
+  const menuBackdropVariants = {
+    initial: { opacity: 0 },
+    animate: { opacity: 1, transition: { duration: 0.3 } },
+    exit: { opacity: 0, transition: { duration: 0.25 } },
   };
 
   const containerVariants = {
@@ -433,51 +466,71 @@ const HeroSection = ({ isPreloaderDone = true }) => {
         )}
       </AnimatePresence>
 
-      {/* MOBILE FULL-SCREEN PANEL */}
+      {/* MOBILE NOTIFICATION PANEL — slide-down with backdrop */}
       <AnimatePresence>
-        {isMenuOpen && (
-          <motion.div
-            variants={menuVariants}
-            initial="initial"
-            animate="animate"
-            exit="exit"
-            className="fixed top-0 left-0 w-full h-[100dvh] bg-black/98 backdrop-blur-md z-[1900] flex flex-col justify-center items-center pointer-events-auto border-b border-neutral-800"
-          >
+        {isMenuOpen && !isDesktopHero && (
+          <>
             <motion.div
-              variants={containerVariants}
+              key="hero-notification-backdrop"
+              variants={menuBackdropVariants}
               initial="initial"
               animate="animate"
-              className="flex flex-col items-center gap-4 text-2xl font-display font-medium tracking-[0.18em] text-gray-200 uppercase text-center"
+              exit="exit"
+              className="fixed left-0 right-0 bottom-0 z-[1850] bg-black/50 backdrop-blur-[2px] lg:hidden"
+              style={{ top: mobileHeaderOffset }}
+              onClick={handleBackdropClick}
+              aria-hidden="true"
+            />
+            <motion.div
+              key="hero-notification-panel"
+              ref={menuPanelRef}
+              id="hero-mobile-notification-panel"
+              role="dialog"
+              aria-modal="true"
+              aria-label="Site navigation and notifications"
+              variants={menuPanelVariants}
+              initial="initial"
+              animate="animate"
+              exit="exit"
+              className="fixed left-0 right-0 z-[1900] lg:hidden pointer-events-auto bg-black/98 backdrop-blur-md border-b border-neutral-800 shadow-lg shadow-black/40"
+              style={{ top: mobileHeaderOffset }}
             >
-              <motion.div variants={itemVariants}>
-                <a href="#work" onClick={() => setIsMenuOpen(false)} className="hover:text-white transition-colors block py-3 cursor-hover">WORK</a>
-              </motion.div>
+              <motion.div
+                variants={containerVariants}
+                initial="initial"
+                animate="animate"
+                className="flex flex-col items-center gap-2 py-8 px-6 text-xl font-display font-medium tracking-[0.18em] text-gray-200 uppercase text-center"
+              >
+                <motion.div variants={itemVariants}>
+                  <a href="#work" onClick={closeMenu} className="hover:text-white transition-colors block py-3 cursor-hover focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-white/30 rounded">WORK</a>
+                </motion.div>
 
-              <motion.div 
-                variants={itemVariants}
-                className="w-[60vw] max-w-[200px] h-[1px] bg-white/10"
-                aria-hidden="true"
-              />
+                <motion.div 
+                  variants={itemVariants}
+                  className="w-[60vw] max-w-[200px] h-[1px] bg-white/10"
+                  aria-hidden="true"
+                />
 
-              <motion.div variants={itemVariants}>
-                <a href="#about" onClick={() => setIsMenuOpen(false)} className="hover:text-white transition-colors block py-3 cursor-hover">ABOUT</a>
-              </motion.div>
+                <motion.div variants={itemVariants}>
+                  <a href="#about" onClick={closeMenu} className="hover:text-white transition-colors block py-3 cursor-hover focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-white/30 rounded">ABOUT</a>
+                </motion.div>
 
-              <motion.div 
-                variants={itemVariants}
-                className="w-[60vw] max-w-[200px] h-[1px] bg-white/10"
-                aria-hidden="true"
-              />
+                <motion.div 
+                  variants={itemVariants}
+                  className="w-[60vw] max-w-[200px] h-[1px] bg-white/10"
+                  aria-hidden="true"
+                />
 
-              <motion.div variants={itemVariants}>
-                <a href="#contact" onClick={() => setIsMenuOpen(false)} className="hover:text-white transition-colors block py-3 cursor-hover">CONTACT</a>
-              </motion.div>
+                <motion.div variants={itemVariants}>
+                  <a href="#contact" onClick={closeMenu} className="hover:text-white transition-colors block py-3 cursor-hover focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-white/30 rounded">CONTACT</a>
+                </motion.div>
 
-              <motion.div variants={itemVariants} className="mt-8 text-xs tracking-widest text-neutral-500 font-sans font-normal normal-case">
-                ©2026 Parth Panchal
+                <motion.div variants={itemVariants} className="mt-4 text-xs tracking-widest text-neutral-500 font-sans font-normal normal-case">
+                  ©2026 Parth Panchal
+                </motion.div>
               </motion.div>
             </motion.div>
-          </motion.div>
+          </>
         )}
       </AnimatePresence>
 
@@ -583,10 +636,11 @@ const HeroSection = ({ isPreloaderDone = true }) => {
           {/* MOBILE HAMBURGER BUTTON (visible on mobile only) */}
           <div className="flex md:hidden w-[40%] md:w-[30%] justify-end pointer-events-auto z-[60]">
             <button
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="flex items-center justify-center w-8 h-8 focus:outline-none"
-              aria-label={isMenuOpen ? "Close Menu" : "Open Menu"}
+              onClick={toggleMenu}
+              className="flex items-center justify-center w-8 h-8 focus:outline-none focus-visible:ring-1 focus-visible:ring-white/30 rounded"
+              aria-label={isMenuOpen ? "Close notification menu" : "Open notification menu"}
               aria-expanded={isMenuOpen}
+              aria-controls="hero-mobile-notification-panel"
             >
               <div className="w-6 h-6 flex items-center justify-center relative">
                 <motion.span
@@ -617,7 +671,10 @@ const HeroSection = ({ isPreloaderDone = true }) => {
       <section className="relative w-full min-h-[90dvh] bg-black flex flex-col justify-between items-center pt-28 pb-10 lg:hidden px-0 text-white overflow-hidden pointer-events-auto">
         
         {/* Mobile Header Top Row */}
-        <div className="absolute top-0 left-0 w-full p-6 flex justify-between items-center text-xs tracking-widest font-semibold uppercase text-gray-200 z-[60]">
+        <div
+          ref={mobileHeaderRef}
+          className="absolute top-0 left-0 w-full p-6 flex justify-between items-center text-xs tracking-widest font-semibold uppercase text-gray-200 z-[60]"
+        >
           {/* LEFT: Premium stacked editorial nameplate */}
           <button
             onClick={() => window.location.href = '/'}
@@ -631,12 +688,14 @@ const HeroSection = ({ isPreloaderDone = true }) => {
           {/* RIGHT: Hamburger Menu Button */}
           <div className="flex justify-end pointer-events-auto">
             <button
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="flex items-center justify-center w-8 h-8 focus:outline-none"
-              aria-label={isMenuOpen ? "Close Menu" : "Open Menu"}
+              ref={menuTriggerRef}
+              onClick={toggleMenu}
+              className="flex items-center justify-center w-8 h-8 focus:outline-none focus-visible:ring-1 focus-visible:ring-white/30 rounded"
+              aria-label={isMenuOpen ? "Close notification menu" : "Open notification menu"}
               aria-expanded={isMenuOpen}
+              aria-controls="hero-mobile-notification-panel"
             >
-              <div className="w-6 h-6 flex items-center justify-center relative">
+              <div className="w-6 h-6 flex items-center justify-center relative" aria-hidden="true">
                 <motion.span
                   animate={isMenuOpen ? { rotate: 45, y: 0 } : { rotate: 0, y: -5 }}
                   transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
