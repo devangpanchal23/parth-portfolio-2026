@@ -30,7 +30,7 @@ export const Projects = () => {
                 className="cursor-hover w-full overflow-hidden bg-[#1a1a1a] rounded-[4px] h-56 flex items-center justify-center relative"
                 data-cursor-size={100}
               >
-                <img src={project.heroImage} alt={project.title} className="w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.08]" loading="lazy" />
+                <img src={project.heroImage} alt={project.title} className="w-full h-full object-cover portfolio-media-responsive transition-transform duration-500 ease-out group-hover:scale-[1.08]" loading="lazy" />
                 <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-10 transition-opacity duration-500 ease-out pointer-events-none" />
               </div>
               <div className="mt-4 flex flex-col gap-[6px]">

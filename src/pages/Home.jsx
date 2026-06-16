@@ -55,7 +55,7 @@ export const Home = ({ setIsImageHovered, isPreloaderDone }) => {
                 <img 
                   src={lostDreamBanner} 
                   alt="The Lost Dream Project" 
-                  className="w-full h-full object-cover grayscale opacity-80 group-hover:grayscale-0 group-hover:scale-105 group-hover:opacity-100 transition-all duration-700 ease-out" 
+                  className="w-full h-full object-cover portfolio-media-responsive portfolio-media-responsive--bw group-hover:scale-105" 
                 />
                 <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-10 transition-opacity duration-500 ease-out pointer-events-none" />
               </ImageWithCursor>
@@ -89,7 +89,7 @@ export const Home = ({ setIsImageHovered, isPreloaderDone }) => {
                 <img 
                   src={dreamsRealityBanner} 
                   alt="From Dreams to Reality" 
-                  className="w-full h-full object-cover grayscale opacity-80 group-hover:grayscale-0 group-hover:scale-105 group-hover:opacity-100 transition-all duration-700 ease-out" 
+                  className="w-full h-full object-cover portfolio-media-responsive portfolio-media-responsive--bw group-hover:scale-105" 
                 />
                 <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-10 transition-opacity duration-500 ease-out pointer-events-none" />
               </ImageWithCursor>
@@ -126,7 +126,7 @@ export const Home = ({ setIsImageHovered, isPreloaderDone }) => {
                 <img
                   src={projectsData["project-rock"]?.heroImage}
                   alt={projectsData["project-rock"]?.title || "Urban Studio Commercial"}
-                  className="w-full h-full object-cover grayscale opacity-80 group-hover:grayscale-0 group-hover:scale-105 group-hover:opacity-100 transition-all duration-700 ease-out"
+                  className="w-full h-full object-cover portfolio-media-responsive portfolio-media-responsive--bw group-hover:scale-105"
                 />
                 <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-10 transition-opacity duration-500 ease-out pointer-events-none" />
               </ImageWithCursor>
@@ -194,12 +194,12 @@ export const Home = ({ setIsImageHovered, isPreloaderDone }) => {
               <img 
                 src={parth1} 
                 alt="Parth Panchal" 
-                className="w-full h-auto aspect-[3/4] object-cover grayscale opacity-90 group-hover:opacity-0 transition-all duration-700 ease-out" 
+                className="w-full h-auto aspect-[3/4] object-cover portfolio-media-responsive portfolio-media-responsive--bw-about" 
               />
               <img 
                 src={parth2} 
                 alt="Parth Panchal Hover" 
-                className="w-full h-full absolute inset-0 object-cover opacity-0 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700 ease-out" 
+                className="w-full h-full absolute inset-0 object-cover opacity-0 group-hover:opacity-100 group-hover:scale-105 portfolio-media-responsive transition-all duration-700 ease-out" 
               />
             </ImageWithCursor>
             </Skeleton>

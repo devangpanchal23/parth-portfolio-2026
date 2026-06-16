@@ -178,7 +178,7 @@ export const ProjectDetail = ({ setIsImageHovered }) => {
                   onMouseEnter={() => setIsImageHovered && setIsImageHovered(true)}
                   onMouseLeave={() => setIsImageHovered && setIsImageHovered(false)}
                 >
-                  <img src={item.src} alt={item.alt || project.title} className="w-full h-full object-cover" loading="lazy" />
+                  <img src={item.src} alt={item.alt || project.title} className="w-full h-full object-cover portfolio-media-responsive" loading="lazy" />
                 </motion.div>
               </section>
             );
@@ -219,7 +219,7 @@ export const ProjectDetail = ({ setIsImageHovered }) => {
                         className="absolute inset-0 z-10"
                         aria-label="Play project video"
                       >
-                        <img src={poster} alt={project.title} className="w-full h-full object-cover" loading="lazy" />
+                        <img src={poster} alt={project.title} className="w-full h-full object-cover portfolio-media-responsive" loading="lazy" />
                         <div className="absolute inset-0 bg-black/30" />
                         <div className="absolute inset-0 flex items-center justify-center">
                           <span className="w-16 h-16 rounded-full bg-[#0f1848]/90 border border-white/30 flex items-center justify-center text-white text-2xl">▶</span>
@@ -274,7 +274,7 @@ export const ProjectDetail = ({ setIsImageHovered }) => {
                   className="w-full overflow-hidden aspect-video bg-[#1a1a1a] border border-white/5 shadow-[0_20px_60px_rgba(0,0,0,0.5)] rounded-[4px] cursor-hover will-change-gpu"
                   onMouseEnter={() => setIsImageHovered && setIsImageHovered(true)} onMouseLeave={() => setIsImageHovered && setIsImageHovered(false)}
                 >
-                  <img src={project.heroImage} alt={project.title} className="w-full h-full object-cover" fetchPriority="high" />
+                  <img src={project.heroImage} alt={project.title} className="w-full h-full object-cover portfolio-media-responsive" fetchPriority="high" />
                 </div>
               )}
             </motion.section>
@@ -295,7 +295,7 @@ export const ProjectDetail = ({ setIsImageHovered }) => {
                     initial={{ opacity: 0, y: 35 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-100px" }} transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
                     onMouseEnter={() => setIsImageHovered && setIsImageHovered(true)} onMouseLeave={() => setIsImageHovered && setIsImageHovered(false)}
                   >
-                    <img src={section.src} className="w-full h-full object-cover" loading="lazy" alt="Project Shot" />
+                    <img src={section.src} className="w-full h-full object-cover portfolio-media-responsive" loading="lazy" alt="Project Shot" />
                   </motion.div>
                 )}
 
@@ -323,10 +323,10 @@ export const ProjectDetail = ({ setIsImageHovered }) => {
                   >
                     <div className="w-full h-full flex">
                       <div className="flex-1 h-full overflow-hidden">
-                        <img src={section.left} className="w-full h-full object-cover" alt="Before" loading="lazy" />
+                        <img src={section.left} className="w-full h-full object-cover portfolio-media-responsive" alt="Before" loading="lazy" />
                       </div>
                       <div className="flex-1 h-full overflow-hidden">
-                        <img src={section.right} className="w-full h-full object-cover" alt="After" loading="lazy" />
+                        <img src={section.right} className="w-full h-full object-cover portfolio-media-responsive" alt="After" loading="lazy" />
                       </div>
                     </div>
                   </motion.div>
@@ -368,7 +368,7 @@ export const ProjectDetail = ({ setIsImageHovered }) => {
                               className="absolute inset-0 z-10"
                               aria-label="Play project video"
                             >
-                              <img src={poster} alt={project.title} className="w-full h-full object-cover" loading="lazy" />
+                              <img src={poster} alt={project.title} className="w-full h-full object-cover portfolio-media-responsive" loading="lazy" />
                               <div className="absolute inset-0 bg-black/30" />
                               <div className="absolute inset-0 flex items-center justify-center">
                                 <span className="w-16 h-16 rounded-full bg-[#0f1848]/90 border border-white/30 flex items-center justify-center text-white text-2xl">▶</span>
@@ -408,7 +408,7 @@ export const ProjectDetail = ({ setIsImageHovered }) => {
                           autoPlay={false}
                         />
                       ) : (
-                        <img src={section.src1} className="w-full h-full object-cover" loading="lazy" alt="Project Shot" />
+                        <img src={section.src1} className="w-full h-full object-cover portfolio-media-responsive" loading="lazy" alt="Project Shot" />
                       )}
                     </motion.div>
                     <motion.div
@@ -424,7 +424,7 @@ export const ProjectDetail = ({ setIsImageHovered }) => {
                           autoPlay={false}
                         />
                       ) : (
-                        <img src={section.src2} className="w-full h-full object-cover" loading="lazy" alt="Project Shot" />
+                        <img src={section.src2} className="w-full h-full object-cover portfolio-media-responsive" loading="lazy" alt="Project Shot" />
                       )}
                     </motion.div>
                   </div>
@@ -471,7 +471,7 @@ export const ProjectDetail = ({ setIsImageHovered }) => {
                                 className="absolute inset-0 z-10"
                                 aria-label={`Play project video ${itemIdx + 1}`}
                               >
-                                <img src={poster} alt={project.title} className="w-full h-full object-cover" loading="lazy" />
+                                <img src={poster} alt={project.title} className="w-full h-full object-cover portfolio-media-responsive" loading="lazy" />
                                 <div className="absolute inset-0 bg-black/35" />
                                 <div className="absolute inset-0 flex items-center justify-center">
                                   <span className="w-14 h-14 rounded-full bg-[#0f1848]/90 border border-white/30 flex items-center justify-center text-white text-xl">▶</span>
@@ -508,7 +508,7 @@ export const ProjectDetail = ({ setIsImageHovered }) => {
                           <img
                             src={item.src}
                             alt="Project Shot"
-                            className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.02]"
+                            className="w-full h-full object-cover portfolio-media-responsive transition-transform duration-700 ease-out group-hover:scale-[1.02]"
                             loading="lazy"
                           />
                         </motion.div>
@@ -533,7 +533,7 @@ export const ProjectDetail = ({ setIsImageHovered }) => {
                         <img
                           src={typeof item === 'string' ? item : item.src}
                           alt="Project Shot"
-                          className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.02]"
+                          className="w-full h-full object-cover portfolio-media-responsive transition-transform duration-700 ease-out group-hover:scale-[1.02]"
                           loading="lazy"
                         />
                       </motion.div>

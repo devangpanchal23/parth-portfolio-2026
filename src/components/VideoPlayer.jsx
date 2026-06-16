@@ -157,7 +157,7 @@ export default function VideoPlayer({ videoSrc, posterImage, className = "aspect
         src={videoSrc}
         poster={posterImage}
         preload="metadata"
-        className="w-full h-full object-cover transition-transform duration-700 ease-out"
+        className="w-full h-full object-cover portfolio-media-responsive transition-transform duration-700 ease-out"
         style={{
           transform: isHovered && !isPlaying && !isFullscreen ? 'scale(1.02)' : 'scale(1)'
         }}

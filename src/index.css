@@ -90,3 +90,65 @@ body {
   width: max-content;
   animation: marquee 20s linear infinite;
 }
+
+/**
+ * Portfolio media: full color on mobile (<768px), grayscale editorial on tablet/desktop.
+ * Uses CSS media queries only — no JS, stable across resize/orientation changes.
+ */
+.portfolio-media-responsive {
+  transition:
+    opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+    filter 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+    -webkit-filter 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Work grid images: color on mobile, B&W + hover reveal on md+ */
+.portfolio-media-responsive--bw {
+  opacity: 1;
+  filter: none;
+  -webkit-filter: none;
+}
+
+@media (min-width: 768px) {
+  .portfolio-media-responsive--bw {
+    opacity: 0.8;
+    filter: grayscale(100%);
+    -webkit-filter: grayscale(100%);
+  }
+
+  .group:hover .portfolio-media-responsive--bw {
+    opacity: 1;
+    filter: grayscale(0%);
+    -webkit-filter: grayscale(0%);
+  }
+}
+
+/* About portrait: color on mobile, B&W + hover swap on md+ */
+.portfolio-media-responsive--bw-about {
+  opacity: 1;
+  filter: none;
+  -webkit-filter: none;
+}
+
+@media (min-width: 768px) {
+  .portfolio-media-responsive--bw-about {
+    opacity: 0.9;
+    filter: grayscale(100%);
+    -webkit-filter: grayscale(100%);
+  }
+
+  .group:hover .portfolio-media-responsive--bw-about {
+    opacity: 0;
+  }
+}
+
+/* Video & poster elements: guarantee full color on mobile viewports */
+@media (max-width: 767px) {
+  .portfolio-media-responsive,
+  video.portfolio-media-responsive,
+  img.portfolio-media-responsive {
+    filter: none !important;
+    -webkit-filter: none !important;
+  }
+}
