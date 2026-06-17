@@ -508,7 +508,7 @@ export const ProjectDetail = ({ setIsImageHovered }) => {
                           <img
                             src={item.src}
                             alt="Project Shot"
-                            className="w-full h-full object-cover portfolio-media-responsive transition-transform duration-700 ease-out group-hover:scale-[1.02]"
+                            className="w-full h-full object-cover portfolio-media-responsive portfolio-media-responsive--zoom"
                             loading="lazy"
                           />
                         </motion.div>
@@ -533,7 +533,7 @@ export const ProjectDetail = ({ setIsImageHovered }) => {
                         <img
                           src={typeof item === 'string' ? item : item.src}
                           alt="Project Shot"
-                          className="w-full h-full object-cover portfolio-media-responsive transition-transform duration-700 ease-out group-hover:scale-[1.02]"
+                          className="w-full h-full object-cover portfolio-media-responsive portfolio-media-responsive--zoom"
                           loading="lazy"
                         />
                       </motion.div>

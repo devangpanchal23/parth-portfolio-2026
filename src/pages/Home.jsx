@@ -55,7 +55,7 @@ export const Home = ({ setIsImageHovered, isPreloaderDone }) => {
                 <img 
                   src={lostDreamBanner} 
                   alt="The Lost Dream Project" 
-                  className="w-full h-full object-cover portfolio-media-responsive portfolio-media-responsive--bw group-hover:scale-105" 
+                  className="w-full h-full object-cover portfolio-media-responsive portfolio-media-responsive--bw portfolio-media-responsive--zoom" 
                 />
                 <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-10 transition-opacity duration-500 ease-out pointer-events-none" />
               </ImageWithCursor>
@@ -71,51 +71,14 @@ export const Home = ({ setIsImageHovered, isPreloaderDone }) => {
             </motion.div>
             </Skeleton>
 
-            {/* Pepsi */}
-            <Skeleton name="home-work-pepsi" loading={isLoading} className="w-full md:w-[60%]">
+            {/* Urban Studio Commercial */}
+            <Skeleton name="home-work-underarmour" loading={isLoading} className="w-full md:w-[60%]">
             <motion.div
               className="w-full flex flex-col gap-4 group"
               initial={{ opacity: 0, y: 60, filter: "blur(10px)" }} 
               whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }} 
               viewport={{ once: true, margin: "-100px" }} 
               transition={{ duration: 1, ease: [0.16, 1, 0.3, 1], delay: 0.15 }}
-            >
-              <ImageWithCursor 
-                className="w-full overflow-hidden aspect-[4/3] bg-[#1a1a1a] cursor-hover relative"
-                onMouseEnter={() => setIsImageHovered && setIsImageHovered(true)} 
-                onMouseLeave={() => setIsImageHovered && setIsImageHovered(false)}
-                onClick={() => navigate('/project/pepsi-generation')}
-              >
-                <img 
-                  src={dreamsRealityBanner} 
-                  alt="From Dreams to Reality" 
-                  className="w-full h-full object-cover portfolio-media-responsive portfolio-media-responsive--bw group-hover:scale-105" 
-                />
-                <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-10 transition-opacity duration-500 ease-out pointer-events-none" />
-              </ImageWithCursor>
-              <div className="flex flex-col gap-[6px] mt-2">
-                <h3 className="font-sans text-[20px] md:text-[28px] leading-[1.2] md:leading-[28px] font-medium text-white">
-                  {projectsData["pepsi-generation"]?.title || "Pepsi: The New Generation"}
-                </h3>
-                <p className="font-sans text-xs md:text-[14px] text-neutral-400 font-light leading-relaxed max-w-[90%] line-clamp-2 my-[2px]">
-                  {projectsData["pepsi-generation"]?.description}
-                </p>
-                <p className="font-sans text-[10px] text-[#888] tracking-widest uppercase font-semibold">Commercial / Colour</p>
-              </div>
-            </motion.div>
-            </Skeleton>
-          </div>
-
-          {/* SECOND ROW */}
-          <div className="flex flex-col md:flex-row gap-8 lg:gap-12 w-full mt-12 md:mt-24">
-            {/* Under Armour */}
-            <Skeleton name="home-work-underarmour" loading={isLoading} className="w-full">
-            <motion.div
-              className="w-full flex flex-col gap-4 group"
-              initial={{ opacity: 0, y: 60, filter: "blur(10px)" }} 
-              whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }} 
-              viewport={{ once: true, margin: "-100px" }} 
-              transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
             >
               <ImageWithCursor
                 className="w-full overflow-hidden aspect-[16/10] bg-[#1a1a1a] cursor-hover relative"
@@ -126,7 +89,7 @@ export const Home = ({ setIsImageHovered, isPreloaderDone }) => {
                 <img
                   src={projectsData["project-rock"]?.heroImage}
                   alt={projectsData["project-rock"]?.title || "Urban Studio Commercial"}
-                  className="w-full h-full object-cover portfolio-media-responsive portfolio-media-responsive--bw group-hover:scale-105"
+                  className="w-full h-full object-cover portfolio-media-responsive portfolio-media-responsive--bw portfolio-media-responsive--zoom"
                 />
                 <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-10 transition-opacity duration-500 ease-out pointer-events-none" />
               </ImageWithCursor>
@@ -139,6 +102,43 @@ export const Home = ({ setIsImageHovered, isPreloaderDone }) => {
                   {projectsData["project-rock"]?.description}
                 </p>
                 <p className="font-sans text-[10px] text-[#888] tracking-widest uppercase font-semibold">Sport / Cinematic</p>
+              </div>
+            </motion.div>
+            </Skeleton>
+          </div>
+
+          {/* SECOND ROW */}
+          <div className="flex flex-col md:flex-row gap-8 lg:gap-12 w-full mt-12 md:mt-24">
+            {/* From Dreams to Reality */}
+            <Skeleton name="home-work-pepsi" loading={isLoading} className="w-full">
+            <motion.div
+              className="w-full flex flex-col gap-4 group"
+              initial={{ opacity: 0, y: 60, filter: "blur(10px)" }} 
+              whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }} 
+              viewport={{ once: true, margin: "-100px" }} 
+              transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
+            >
+              <ImageWithCursor 
+                className="w-full overflow-hidden aspect-video bg-[#1a1a1a] cursor-hover relative"
+                onMouseEnter={() => setIsImageHovered && setIsImageHovered(true)} 
+                onMouseLeave={() => setIsImageHovered && setIsImageHovered(false)}
+                onClick={() => navigate('/project/pepsi-generation')}
+              >
+                <img 
+                  src={dreamsRealityBanner} 
+                  alt="From Dreams to Reality" 
+                  className="w-full h-full object-cover portfolio-media-responsive portfolio-media-responsive--bw portfolio-media-responsive--zoom" 
+                />
+                <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-10 transition-opacity duration-500 ease-out pointer-events-none" />
+              </ImageWithCursor>
+              <div className="flex flex-col gap-[6px] mt-2">
+                <h3 className="font-sans text-[20px] md:text-[28px] leading-[1.2] md:leading-[28px] font-medium text-white">
+                  {projectsData["pepsi-generation"]?.title || "Pepsi: The New Generation"}
+                </h3>
+                <p className="font-sans text-xs md:text-[14px] text-neutral-400 font-light leading-relaxed max-w-[90%] line-clamp-2 my-[2px]">
+                  {projectsData["pepsi-generation"]?.description}
+                </p>
+                <p className="font-sans text-[10px] text-[#888] tracking-widest uppercase font-semibold">Commercial / Colour</p>
               </div>
             </motion.div>
             </Skeleton>
@@ -199,7 +199,7 @@ export const Home = ({ setIsImageHovered, isPreloaderDone }) => {
               <img 
                 src={parth2} 
                 alt="Parth Panchal Hover" 
-                className="w-full h-full absolute inset-0 object-cover opacity-0 group-hover:opacity-100 group-hover:scale-105 portfolio-media-responsive transition-all duration-700 ease-out" 
+                className="w-full h-full absolute inset-0 object-cover portfolio-media-responsive portfolio-media-responsive--hover-overlay portfolio-media-responsive--zoom" 
               />
             </ImageWithCursor>
             </Skeleton>

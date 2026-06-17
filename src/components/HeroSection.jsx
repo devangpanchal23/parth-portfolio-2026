@@ -70,6 +70,7 @@ const HeroSection = ({ isPreloaderDone = true }) => {
   const heroCursorRef = useRef(null);
   const imagePoolContainerRef = useRef(null);
   const mobileHeadingRef = useRef(null);
+  const hasHeadingAnimated = useRef(false);
 
   // State refs for the requestAnimationFrame loop
   const mouse = useRef({ x: 0, y: 0, isActive: false });
@@ -172,6 +173,7 @@ const HeroSection = ({ isPreloaderDone = true }) => {
   /* ── Entry Animations ──────────────────────────────────────── */
   useEffect(() => {
     if (!isPreloaderDone) {
+      hasHeadingAnimated.current = false;
       gsap.set([headingRef.current, mobileHeadingRef.current, subtextRef.current], { opacity: 0 });
       if (navRef.current) {
         gsap.set(navRef.current.querySelectorAll('.nav-anim-item'), { opacity: 0 });
@@ -179,27 +181,45 @@ const HeroSection = ({ isPreloaderDone = true }) => {
       return;
     }
 
+    if (hasHeadingAnimated.current) return;
+    hasHeadingAnimated.current = true;
+
+    const animateHeadingChars = (container, chars, timeline) => {
+      if (!container || !chars?.length) return;
+
+      gsap.set(container, { opacity: 1 });
+      gsap.set(chars, { opacity: 0, filter: 'blur(8px)' });
+
+      timeline.fromTo(
+        chars,
+        {
+          opacity: 0,
+          filter: 'blur(8px)',
+        },
+        {
+          opacity: 1,
+          filter: 'blur(0px)',
+          duration: 2.2,
+          stagger: 0.12,
+          ease: 'power2.out',
+        },
+        0
+      );
+    };
+
     const ctx = gsap.context(() => {
-      // Main Heading reveal - Progressive Character Reveal with Cinematic Blur (No transforms)
       const headingTl = gsap.timeline({ delay: 0.1 });
-      
-      // Instantly make container visible so we can reveal individual characters
-      gsap.set([headingRef.current, mobileHeadingRef.current], { opacity: 1 });
-      
-      const chars = document.querySelectorAll('.char-item');
-      
-      headingTl.fromTo(chars, 
-        { 
-          opacity: 0.15, 
-          filter: 'blur(8px)'
-        }, 
-        { 
-          opacity: 1, 
-          filter: 'blur(0px)', 
-          duration: 2.2, 
-          stagger: 0.12, 
-          ease: 'power2.out' 
-        }
+
+      animateHeadingChars(
+        headingRef.current,
+        headingRef.current?.querySelectorAll('.char-item'),
+        headingTl
+      );
+
+      animateHeadingChars(
+        mobileHeadingRef.current,
+        mobileHeadingRef.current?.querySelectorAll('.char-item'),
+        headingTl
       );
 
       // Navigation reveal (Staggered Pulse: 1 -> 1.08 -> 1)
@@ -224,7 +244,7 @@ const HeroSection = ({ isPreloaderDone = true }) => {
         ease: 'expo.out',
         delay: 1.4,
       });
-    }, sectionRef);
+    });
 
     return () => ctx.revert();
   }, [isPreloaderDone]);
@@ -315,22 +335,37 @@ const HeroSection = ({ isPreloaderDone = true }) => {
 
       // Cancel any ongoing animations on this recycled element
       gsap.killTweensOf(el);
+      gsap.killTweensOf(imgNode);
 
       // Set instantaneous spawn state using local offsets and constant width/height to avoid layout reflows
       gsap.set(el, {
         x: localX - IMG_WIDTH / 2,
         y: localY - IMG_HEIGHT / 2,
         rotation: rot,
-        scale: 0.5,
+        scale: 0.92,
         opacity: 0,
       });
 
-      // Phase 1: Reveal smoothly (longer duration for premium feel)
+      gsap.set(imgNode, {
+        scale: 1,
+        x: 0,
+        y: 0,
+        transformOrigin: 'center center',
+        force3D: true,
+      });
+
+      // Phase 1: Reveal smoothly with subtle cinematic zoom-in
       gsap.to(el, {
         opacity: 1,
         scale: 1,
-        duration: 0.6,
+        duration: 0.75,
         ease: 'power2.out',
+      });
+
+      gsap.to(imgNode, {
+        scale: 1.1,
+        duration: 2.8,
+        ease: 'power1.out',
       });
 
       // Phase 2: Inertia drift (slower, longer cinematic glide)
@@ -395,7 +430,7 @@ const HeroSection = ({ isPreloaderDone = true }) => {
             // Sway in opposite direction to container to create stunning 3D depth windows!
             const imgParallaxX = -smoothParallax.current.x * 0.6;
             const imgParallaxY = -smoothParallax.current.y * 0.6;
-            img.style.transform = `scale(1.15) translate3d(${imgParallaxX}px, ${imgParallaxY}px, 0)`;
+            gsap.set(img, { x: imgParallaxX, y: imgParallaxY, force3D: true });
           }
         }
       });
@@ -582,13 +617,13 @@ const HeroSection = ({ isPreloaderDone = true }) => {
                   <span
                     key={charIndex}
                     className="inline-block char-item"
-                    style={{ opacity: 0.15, filter: 'blur(8px)', willChange: 'opacity, filter' }}
+                    style={{ opacity: 0, filter: 'blur(8px)', willChange: 'opacity, filter' }}
                   >
                     {char}
                   </span>
                 ))}
                 {wordIndex < arr.length - 1 && (
-                  <span className="inline-block char-item" style={{ opacity: 0.15, filter: 'blur(8px)', willChange: 'opacity, filter' }}>&nbsp;</span>
+                  <span className="inline-block char-item" style={{ opacity: 0, filter: 'blur(8px)', willChange: 'opacity, filter' }}>&nbsp;</span>
                 )}
               </span>
             ))}
@@ -730,13 +765,13 @@ const HeroSection = ({ isPreloaderDone = true }) => {
                   <span
                     key={charIndex}
                     className="inline-block char-item"
-                    style={{ opacity: 0.15, filter: 'blur(8px)', willChange: 'opacity, filter' }}
+                    style={{ opacity: 0, filter: 'blur(8px)', willChange: 'opacity, filter' }}
                   >
                     {char}
                   </span>
                 ))}
                 {wordIndex < arr.length - 1 && (
-                  <span className="inline-block char-item" style={{ opacity: 0.15, filter: 'blur(8px)', willChange: 'opacity, filter' }}>&nbsp;</span>
+                  <span className="inline-block char-item" style={{ opacity: 0, filter: 'blur(8px)', willChange: 'opacity, filter' }}>&nbsp;</span>
                 )}
               </span>
             ))}

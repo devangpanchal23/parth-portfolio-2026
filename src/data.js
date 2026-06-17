@@ -37,8 +37,32 @@ The color grade was crafted to enhance the emotional journey of the story,
         items: [img11, img12, img13, img14]
       }
     ],
+    nextSlug: "project-rock",
+    nextTitle: "Urban Studio Commercial"
+  },
+  "project-rock": {
+    title: "Urban Studio Commercial",
+    client: "Portfolio Project",
+    year: "2026",
+    role: "Colorist",
+    deliverables: "Color Grading / Look Development / Film Emulation",
+    heroImage: img33,
+    description: `A fashion commercial crafted to showcase the brand's style and identity. The
+color grade combines clean, polished visuals with subtle film-inspired tones to
+create a premium and cinematic look..`,
+    hideHero: true,
+    sections: [
+      {
+        type: "embed",
+        src: "https://player.vimeo.com/video/1200485230?title=0&byline=0&portrait=0&badge=0&autopause=0&player_id=0&app_id=58479",
+        poster: img33
+      },
+      { type: "full", src: img32 },
+      { type: "full", src: img33 },
+      { type: "full", src: img31 },
+    ],
     nextSlug: "pepsi-generation",
-    nextTitle: "Pepsi: The New Generation"
+    nextTitle: "From Dreams to Reality"
   },
   "pepsi-generation": {
     title: "From Dreams to Reality",
@@ -64,30 +88,6 @@ experience.`,
           { type: "image", src: img22 }
         ]
       }
-    ],
-    nextSlug: "project-rock",
-    nextTitle: "Under Armour x Project Rock"
-  },
-  "project-rock": {
-    title: "Urban Studio Commercial",
-    client: "Portfolio Project",
-    year: "2026",
-    role: "Colorist",
-    deliverables: "Color Grading / Look Development / Film Emulation",
-    heroImage: img33,
-    description: `A fashion commercial crafted to showcase the brand’s style and identity. The
-color grade combines clean, polished visuals with subtle film-inspired tones to
-create a premium and cinematic look..`,
-    hideHero: true,
-    sections: [
-      {
-        type: "embed",
-        src: "https://player.vimeo.com/video/1200485230?title=0&byline=0&portrait=0&badge=0&autopause=0&player_id=0&app_id=58479",
-        poster: img33
-      },
-      { type: "full", src: img32 },
-      { type: "full", src: img33 },
-      { type: "full", src: img31 },
     ],
     nextSlug: "leaf-moon",
     nextTitle: "A Leaf From The Moon"
