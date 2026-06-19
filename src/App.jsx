@@ -1,25 +1,16 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { Routes, Route, useLocation, useNavigate } from 'react-router-dom';
 import { Home } from './pages/Home';
 import { Projects } from './pages/Projects';
 import { ProjectDetail } from './pages/ProjectDetail';
 import NoiseOverlay from './components/NoiseOverlay';
-import Preloader from './components/Preloader';
 import Lenis from '@studio-freight/lenis';
 import { scrollToSection, getSectionIdFromHref, isHomeSectionLink } from './utils/smoothScroll';
 
 function App() {
-  const [isPreloaderDone, setIsPreloaderDone] = useState(
-    () => sessionStorage.getItem('hasLoadedBefore') === 'true'
-  );
   const location = useLocation();
   const navigate = useNavigate();
   const pendingHashScroll = useRef(false);
-
-  const handlePreloaderComplete = () => {
-    sessionStorage.setItem('hasLoadedBefore', 'true');
-    setIsPreloaderDone(true);
-  };
 
   // Prevent browser scroll restoration from jumping past the hero on load
   useEffect(() => {
@@ -146,12 +137,9 @@ function App() {
 
   return (
     <div className="bg-black min-h-screen w-full selection:bg-white/20">
-      {!isPreloaderDone && (
-        <Preloader onComplete={handlePreloaderComplete} />
-      )}
       <NoiseOverlay />
       <Routes>
-        <Route path="/" element={<Home isPreloaderDone={isPreloaderDone} />} />
+        <Route path="/" element={<Home />} />
         <Route path="/projects" element={<Projects />} />
         <Route path="/project/:slug" element={<ProjectDetail />} />
       </Routes>

@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import gsap from 'gsap';
 import EmailModal from './EmailModal';
+import HeroShowcaseSlider from './HeroShowcaseSlider';
 import { useMediaQuery } from '../hooks/useMediaQuery';
 import { useDismissiblePanel } from '../hooks/useDismissiblePanel';
 
@@ -20,48 +21,7 @@ const IMAGES = [
 const POOL_SIZE = 20;
 const SPAWN_DISTANCE = 160; // Pixels distance before spawning next image (increased from 90 to reduce frequency)
 
-/* ── High-Performance Interactive Count Component ─────────────── */
-const AnimatedCounter = ({ end, duration = 1.5, suffix = "" }) => {
-  const [count, setCount] = useState(0);
-  const elementRef = useRef(null);
-  const hasAnimated = useRef(false);
-
-  useEffect(() => {
-    const element = elementRef.current;
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting && !hasAnimated.current) {
-          hasAnimated.current = true;
-          let startTimestamp = null;
-          const step = (timestamp) => {
-            if (!startTimestamp) startTimestamp = timestamp;
-            const progress = Math.min((timestamp - startTimestamp) / (duration * 1000), 1);
-            setCount(Math.floor(progress * end));
-            if (progress < 1) {
-              window.requestAnimationFrame(step);
-            }
-          };
-          window.requestAnimationFrame(step);
-        }
-      },
-      { threshold: 0.1 }
-    );
-
-    if (element) {
-      observer.observe(element);
-    }
-
-    return () => {
-      if (element) {
-        observer.unobserve(element);
-      }
-    };
-  }, [end, duration]);
-
-  return <span ref={elementRef}>{count}{suffix}</span>;
-};
-
-const HeroSection = ({ isPreloaderDone = true }) => {
+const HeroSection = () => {
   const sectionRef = useRef(null);
   const headingRef = useRef(null);
   const subtextRef = useRef(null);
@@ -172,15 +132,6 @@ const HeroSection = ({ isPreloaderDone = true }) => {
 
   /* ── Entry Animations ──────────────────────────────────────── */
   useEffect(() => {
-    if (!isPreloaderDone) {
-      hasHeadingAnimated.current = false;
-      gsap.set([headingRef.current, mobileHeadingRef.current, subtextRef.current], { opacity: 0 });
-      if (navRef.current) {
-        gsap.set(navRef.current.querySelectorAll('.nav-anim-item'), { opacity: 0 });
-      }
-      return;
-    }
-
     if (hasHeadingAnimated.current) return;
     hasHeadingAnimated.current = true;
 
@@ -247,7 +198,7 @@ const HeroSection = ({ isPreloaderDone = true }) => {
     });
 
     return () => ctx.revert();
-  }, [isPreloaderDone]);
+  }, []);
 
   /* ── Cinematic Image Trail Logic ───────────────────────────── */
   useEffect(() => {
@@ -290,7 +241,7 @@ const HeroSection = ({ isPreloaderDone = true }) => {
       }
 
       // Smart Hover: Hide hero custom cursor when hovering interactive elements to let global cursor dominate
-      if (heroCursorRef.current && !isCoarse && isPreloaderDone) {
+      if (heroCursorRef.current && !isCoarse) {
         const isHoveringInteractive = e.target && e.target.closest && e.target.closest('.cursor-hover, a, button');
         heroCursorRef.current.style.opacity = isHoveringInteractive ? '0' : '1';
       }
@@ -402,7 +353,7 @@ const HeroSection = ({ isPreloaderDone = true }) => {
       const velocityY = smoothMouse.current.y - prevY;
 
       // Update custom circular cursor position smoothly using pixel-perfect viewport offset
-      if (heroCursorRef.current && !isCoarse && isPreloaderDone) {
+      if (heroCursorRef.current && !isCoarse) {
         heroCursorRef.current.style.transform = `translate3d(${smoothMouse.current.x}px, ${smoothMouse.current.y}px, 0) translate(-50%, -50%)`;
       }
 
@@ -459,7 +410,7 @@ const HeroSection = ({ isPreloaderDone = true }) => {
       window.removeEventListener('resize', handleResize);
       cancelAnimationFrame(rafId.current);
     };
-  }, [isPreloaderDone]);
+  }, []);
 
   return (
     <>
@@ -641,6 +592,11 @@ const HeroSection = ({ isPreloaderDone = true }) => {
           </p>
         </div>
 
+        {/* --- Desktop Portfolio Showcase Slider --- */}
+        <div className="absolute bottom-[118px] left-0 right-0 z-[1000] pointer-events-auto hidden lg:block">
+          <HeroShowcaseSlider animationDelay={1.6} />
+        </div>
+
         {/* --- Top Navigation UI --- */}
         <div 
           ref={navRef}
@@ -798,27 +754,8 @@ const HeroSection = ({ isPreloaderDone = true }) => {
           </motion.h3>
         </div>
 
-        {/* Stats Section: 50+ Projects | 1M+ Views (mt-10 creates premium layout spacing) */}
-        <motion.div
-          initial={{ opacity: 0, y: 15 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 1.1 }}
-          className="w-full max-w-[450px] px-6 flex justify-center items-center gap-6 py-5 border-y border-white/5 mt-10 mb-8 text-center"
-        >
-          <div className="flex-1">
-            <div className="text-3xl font-display font-semibold text-white leading-none mb-1">
-              <AnimatedCounter end={50} suffix="+" />
-            </div>
-            <div className="text-[9px] tracking-widest text-[#555] uppercase font-bold">Projects</div>
-          </div>
-          <div className="w-[1px] h-8 bg-white/10" />
-          <div className="flex-1">
-            <div className="text-3xl font-display font-semibold text-white leading-none mb-1">
-              <AnimatedCounter end={1} suffix="M+" />
-            </div>
-            <div className="text-[9px] tracking-widest text-[#555] uppercase font-bold">Views</div>
-          </div>
-        </motion.div>
+        {/* Portfolio Showcase Slider */}
+        <HeroShowcaseSlider className="w-full mt-10 mb-8 lg:hidden" animationDelay={1.1} />
 
         {/* CTA Area */}
         <motion.div

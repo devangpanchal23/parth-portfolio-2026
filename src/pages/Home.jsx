@@ -11,22 +11,20 @@ import parth2 from '../assets/images/parth2.jpg';
 import lostDreamBanner from '../assets/images/lost_dream_banner.jpg';
 import dreamsRealityBanner from '../assets/images/dreams_reality_banner.jpg';
 
-export const Home = ({ setIsImageHovered, isPreloaderDone }) => {
+export const Home = ({ setIsImageHovered }) => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = React.useState(true);
 
   useEffect(() => {
-    if (isPreloaderDone) {
-      const timer = setTimeout(() => setIsLoading(false), 800);
-      return () => clearTimeout(timer);
-    }
-  }, [isPreloaderDone]);
+    const timer = setTimeout(() => setIsLoading(false), 800);
+    return () => clearTimeout(timer);
+  }, []);
 
 
   return (
     <div className="w-full relative bg-black">
       {/* --- HERO SECTION --- */}
-      <HeroSection isPreloaderDone={isPreloaderDone} />
+      <HeroSection />
 
       {/* --- SELECTED WORK SECTION --- */}
       <section id="work" className="w-full pt-24 pb-12 md:pb-16 lg:pb-24 mt-12 border-t border-[#222]">

@@ -91,6 +91,58 @@ body {
   animation: marquee 20s linear infinite;
 }
 
+/* Cinematic hero portfolio showcase — seamless infinite scroll */
+.hero-showcase-viewport {
+  height: 92px;
+  mask-image: linear-gradient(to right, transparent 0%, #000 6%, #000 94%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, #000 6%, #000 94%, transparent 100%);
+}
+
+@media (min-width: 640px) {
+  .hero-showcase-viewport {
+    height: 108px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .hero-showcase-viewport {
+    height: 130px;
+  }
+}
+
+.hero-showcase-slide {
+  width: 148px;
+  height: 92px;
+}
+
+@media (min-width: 640px) {
+  .hero-showcase-slide {
+    width: 172px;
+    height: 108px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .hero-showcase-slide {
+    width: 208px;
+    height: 130px;
+  }
+}
+
+@keyframes heroShowcaseScroll {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+  100% {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+.hero-showcase-track {
+  will-change: transform;
+  animation: heroShowcaseScroll 48s linear infinite;
+}
+
 /**
  * Portfolio media: full color on mobile (<768px), grayscale editorial on tablet/desktop.
  * Uses CSS media queries only — no JS, stable across resize/orientation changes.
