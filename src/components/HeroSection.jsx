@@ -773,12 +773,12 @@ const HeroSection = () => {
       </section>
 
       {/* --- MOBILE & TABLET HERO SECTION (lg:hidden, visible on mobile/tablet) --- */}
-      <section className="relative w-full min-h-[100dvh] bg-black flex flex-col lg:hidden px-0 text-white overflow-hidden pointer-events-auto">
+      <section className="relative w-full min-h-[100svh] bg-black flex flex-col lg:hidden px-0 text-white overflow-hidden pointer-events-auto">
         
         {/* Mobile Header Top Row */}
         <div
           ref={mobileHeaderRef}
-          className="absolute top-0 left-0 w-full p-6 flex justify-between items-center text-xs tracking-widest font-semibold uppercase text-gray-200 z-[60]"
+          className="absolute top-0 left-0 w-full px-6 py-[clamp(20px,5vw,24px)] flex justify-between items-center text-xs tracking-widest font-semibold uppercase text-gray-200 z-[60]"
         >
           {/* LEFT: Premium stacked editorial nameplate */}
           <button
@@ -821,83 +821,81 @@ const HeroSection = () => {
           </div>
         </div>
 
-        {/* Main Content Area: Name Plate -> Role -> Tagline */}
         <div
-          className="flex flex-col items-center text-center px-6 w-full max-w-[500px] mx-auto"
-          style={{ paddingTop: mobileHeaderOffset + 20 }}
+          className="mobile-hero-flow"
+          style={{ paddingTop: `calc(${mobileHeaderOffset}px + clamp(18px, 4.5svh, 42px))` }}
         >
-          
-          {/* H1: Parth Panchal (Main Brand focal point, progressive-reveal characters) */}
-          <h1
-            ref={mobileHeadingRef}
-            className="font-display text-[clamp(2.5rem,12vw,4.5rem)] font-black tracking-tighter text-white leading-[0.95] uppercase max-w-[450px]"
-            aria-label="Parth Panchal"
-          >
-            {"Parth Panchal".split(" ").map((word, wordIndex, arr) => (
-              <span key={wordIndex} className="inline-block whitespace-nowrap">
-                {word.split("").map((char, charIndex) => (
-                  <span
-                    key={charIndex}
-                    className="inline-block char-item"
-                    style={{ opacity: 0, filter: 'blur(8px)', willChange: 'opacity, filter' }}
-                  >
-                    {char}
-                  </span>
-                ))}
-                {wordIndex < arr.length - 1 && (
-                  <span className="inline-block char-item" style={{ opacity: 0, filter: 'blur(8px)', willChange: 'opacity, filter' }}>&nbsp;</span>
-                )}
-              </span>
-            ))}
-          </h1>
+          {/* Main Content Area: Name Plate -> Role -> Tagline */}
+          <div className="mobile-hero-copy">
+            {/* H1: Parth Panchal (Main Brand focal point, progressive-reveal characters) */}
+            <h1
+              ref={mobileHeadingRef}
+              className="mobile-hero-name font-display font-black text-white uppercase"
+              aria-label="Parth Panchal"
+            >
+              {"Parth Panchal".split(" ").map((word) => (
+                <span key={word} className="block whitespace-nowrap">
+                  {word.split("").map((char, charIndex) => (
+                    <span
+                      key={charIndex}
+                      className="inline-block char-item"
+                      style={{ opacity: 0, filter: 'blur(8px)', willChange: 'opacity, filter' }}
+                    >
+                      {char}
+                    </span>
+                  ))}
+                </span>
+              ))}
+            </h1>
 
-          {/* Subtitle Label: Colorist / Video Editor */}
+            {/* Subtitle Label: Colorist / Video Editor */}
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 1.0, delay: 0.7, ease: [0.16, 1, 0.3, 1] }}
+              className="mobile-hero-role font-medium text-white/50 uppercase"
+            >
+              Colorist / Video Editor
+            </motion.div>
+
+            {/* Tagline */}
+            <motion.h3
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 1.2, delay: 0.9, ease: [0.16, 1, 0.3, 1] }}
+              className="mobile-hero-tagline font-sans font-light text-white/80 uppercase text-center"
+            >
+              Emotion. Mood. Atmosphere. <br /> crafted through color
+            </motion.h3>
+          </div>
+
+          {/* Portfolio Showcase Slider — mobile only (<768px), conditionally mounted */}
+          {showMobileSlider && (
+            <HeroShowcaseSlider className="mobile-hero-slider" animationDelay={1.1} />
+          )}
+
+          {/* CTA Area */}
           <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1.0, delay: 0.7, ease: [0.16, 1, 0.3, 1] }}
-            className="text-[10px] md:text-[11px] tracking-[0.5em] font-medium text-white/50 uppercase mt-3 md:mt-4 -mr-[0.5em]"
-          >
-            Colorist / Video Editor
-          </motion.div>
-
-          {/* Tagline */}
-          <motion.h3
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1.2, delay: 0.9, ease: [0.16, 1, 0.3, 1] }}
-            className="text-xs xs:text-sm md:text-base font-sans font-light text-white/80 leading-relaxed max-w-[340px] uppercase tracking-[0.18em] mt-5 md:mt-6 text-center"
+            transition={{ duration: 0.8, delay: 1.3 }}
+            className="mobile-hero-cta"
           >
-            Emotion. Mood. Atmosphere. <br className="hidden xs:block" /> crafted through color
-          </motion.h3>
-        </div>
+            <span className="mobile-hero-cta-label">Let's Work Together</span>
+            <button
+              onClick={() => setIsEmailModalOpen(true)}
+              className="mobile-hero-cta-button font-sans bg-white text-black rounded-full font-semibold uppercase hover:scale-105 transition-all duration-300 shadow-xl shadow-white/5 cursor-pointer"
+            >
+              Let's Connect
+            </button>
+          </motion.div>
 
-        {/* Portfolio Showcase Slider — mobile only (<768px), conditionally mounted */}
-        {showMobileSlider && (
-          <HeroShowcaseSlider className="w-full mt-6 mb-4" animationDelay={1.1} />
-        )}
-
-        {/* CTA Area */}
-        <motion.div
-          initial={{ opacity: 0, y: 15 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 1.3 }}
-          className={`w-full px-6 flex flex-col items-center gap-3 text-center ${showMobileSlider ? 'mb-6' : 'mt-8 mb-8'}`}
-        >
-          <span className="text-[10px] text-[#888] font-semibold tracking-widest uppercase">Let's Work Together</span>
-          <button
-            onClick={() => setIsEmailModalOpen(true)}
-            className="font-sans bg-white text-black px-8 py-3 rounded-full text-[10px] font-semibold tracking-widest uppercase hover:scale-105 transition-all duration-300 shadow-xl shadow-white/5 cursor-pointer w-full max-w-[280px]"
-          >
-            Let's Connect
-          </button>
-        </motion.div>
-
-        {/* Full-Width Scrolling Marquee */}
-        <div className="relative w-full overflow-hidden py-4 bg-[#0a0a0a] border-y border-white/5 pointer-events-none mt-auto">
-          <div className="animate-marquee flex gap-8 whitespace-nowrap text-[9px] font-bold tracking-[0.3em] text-[#666]">
-            <span>COMMERCIALS • REELS • ADS • CINEMATIC FILMS • COMMERCIALS • REELS • ADS • CINEMATIC FILMS •</span>
-            <span>COMMERCIALS • REELS • ADS • CINEMATIC FILMS • COMMERCIALS • REELS • ADS • CINEMATIC FILMS •</span>
+          {/* Full-Width Scrolling Marquee */}
+          <div className="mobile-hero-marquee relative w-full overflow-hidden bg-[#0a0a0a] border-y border-white/5 pointer-events-none">
+            <div className="animate-marquee flex gap-8 whitespace-nowrap font-bold text-[#666]">
+              <span>COMMERCIALS • REELS • ADS • CINEMATIC FILMS • COMMERCIALS • REELS • ADS • CINEMATIC FILMS •</span>
+              <span>COMMERCIALS • REELS • ADS • CINEMATIC FILMS • COMMERCIALS • REELS • ADS • CINEMATIC FILMS •</span>
+            </div>
           </div>
         </div>
       </section>
