@@ -1,12 +1,14 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useLayoutEffect, useRef, useCallback } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import gsap from 'gsap';
 import EmailModal from './EmailModal';
 import HeroShowcaseSlider from './HeroShowcaseSlider';
-import { useMediaQuery } from '../hooks/useMediaQuery';
+import { useMediaQuery, MOBILE_SLIDER_QUERY } from '../hooks/useMediaQuery';
 import { useDismissiblePanel } from '../hooks/useDismissiblePanel';
 
 const DESKTOP_HERO_QUERY = '(min-width: 1024px)';
+const HEADING_ANIMATION_FALLBACK_MS = 4500;
+const HEADING_READY_MAX_RETRIES = 90;
 
 /* ── Cinematic Image Config ────────────────────────────────────── */
 const IMAGES = [
@@ -30,7 +32,9 @@ const HeroSection = () => {
   const heroCursorRef = useRef(null);
   const imagePoolContainerRef = useRef(null);
   const mobileHeadingRef = useRef(null);
-  const hasHeadingAnimated = useRef(false);
+  const animatedHeadings = useRef(new Set());
+  const headingAnimationCtx = useRef(null);
+  const headingFallbackTimer = useRef(null);
 
   // State refs for the requestAnimationFrame loop
   const mouse = useRef({ x: 0, y: 0, isActive: false });
@@ -53,7 +57,14 @@ const HeroSection = () => {
   const menuPanelRef = useRef(null);
   const menuTriggerRef = useRef(null);
   const [mobileHeaderOffset, setMobileHeaderOffset] = useState(72);
+  const [hasMounted, setHasMounted] = useState(false);
   const isDesktopHero = useMediaQuery(DESKTOP_HERO_QUERY);
+  const isMobileSlider = useMediaQuery(MOBILE_SLIDER_QUERY);
+  const showMobileSlider = hasMounted && isMobileSlider;
+
+  useEffect(() => {
+    setHasMounted(true);
+  }, []);
 
   const closeMenu = useCallback(() => setIsMenuOpen(false), []);
   const toggleMenu = useCallback(() => setIsMenuOpen((prev) => !prev), []);
@@ -130,18 +141,67 @@ const HeroSection = () => {
     }
   };
 
-  /* ── Entry Animations ──────────────────────────────────────── */
-  useEffect(() => {
-    if (hasHeadingAnimated.current) return;
-    hasHeadingAnimated.current = true;
+  const ensureHeadingVisible = useCallback((container) => {
+    if (!container) return;
 
-    const animateHeadingChars = (container, chars, timeline) => {
-      if (!container || !chars?.length) return;
+    const chars = container.querySelectorAll('.char-item');
+    gsap.set(container, { opacity: 1 });
+    gsap.set(chars, { opacity: 1, filter: 'blur(0px)', clearProps: 'willChange' });
+  }, []);
+
+  const getActiveHeading = useCallback(() => {
+    const isDesktop = window.matchMedia(DESKTOP_HERO_QUERY).matches;
+    return isDesktop ? headingRef.current : mobileHeadingRef.current;
+  }, []);
+
+  const getHeadingKey = useCallback((container) => {
+    if (!container) return null;
+    return container === headingRef.current ? 'desktop' : 'mobile';
+  }, []);
+
+  const clearHeadingFallback = useCallback(() => {
+    if (headingFallbackTimer.current) {
+      clearTimeout(headingFallbackTimer.current);
+      headingFallbackTimer.current = null;
+    }
+  }, []);
+
+  const scheduleHeadingFallback = useCallback((container) => {
+    clearHeadingFallback();
+    headingFallbackTimer.current = setTimeout(() => {
+      ensureHeadingVisible(container);
+    }, HEADING_ANIMATION_FALLBACK_MS);
+  }, [clearHeadingFallback, ensureHeadingVisible]);
+
+  const animateHeading = useCallback((container, { includeDesktopExtras = false } = {}) => {
+    if (!container) return false;
+
+    const headingKey = getHeadingKey(container);
+    if (!headingKey || animatedHeadings.current.has(headingKey)) {
+      ensureHeadingVisible(container);
+      return true;
+    }
+
+    const chars = container.querySelectorAll('.char-item');
+    if (!chars.length) return false;
+
+    headingAnimationCtx.current?.revert();
+    clearHeadingFallback();
+
+    headingAnimationCtx.current = gsap.context(() => {
+      const headingTl = gsap.timeline({
+        delay: 0.1,
+        onComplete: () => {
+          ensureHeadingVisible(container);
+          animatedHeadings.current.add(headingKey);
+          clearHeadingFallback();
+        },
+      });
 
       gsap.set(container, { opacity: 1 });
       gsap.set(chars, { opacity: 0, filter: 'blur(8px)' });
 
-      timeline.fromTo(
+      headingTl.fromTo(
         chars,
         {
           opacity: 0,
@@ -156,52 +216,111 @@ const HeroSection = () => {
         },
         0
       );
-    };
 
-    const ctx = gsap.context(() => {
-      const headingTl = gsap.timeline({ delay: 0.1 });
+      if (includeDesktopExtras) {
+        if (navRef.current) {
+          const navItems = navRef.current.querySelectorAll('.nav-anim-item');
+          navItems.forEach((item, i) => {
+            const itemTl = gsap.timeline({ delay: 0.8 + i * 0.1 });
+            itemTl
+              .fromTo(
+                item,
+                { opacity: 0, scale: 1, y: -10 },
+                { opacity: 1, y: 0, duration: 0.8, ease: 'power2.out' }
+              )
+              .to(item, { scale: 1.08, duration: 0.4, ease: 'power2.out' }, 0.2)
+              .to(item, { scale: 1, duration: 0.6, ease: 'power2.inOut' });
+          });
+        }
 
-      animateHeadingChars(
-        headingRef.current,
-        headingRef.current?.querySelectorAll('.char-item'),
-        headingTl
-      );
-
-      animateHeadingChars(
-        mobileHeadingRef.current,
-        mobileHeadingRef.current?.querySelectorAll('.char-item'),
-        headingTl
-      );
-
-      // Navigation reveal (Staggered Pulse: 1 -> 1.08 -> 1)
-      if (navRef.current) {
-        const navItems = navRef.current.querySelectorAll('.nav-anim-item');
-        navItems.forEach((item, i) => {
-          const itemTl = gsap.timeline({ delay: 0.8 + i * 0.1 });
-          itemTl.fromTo(item, 
-            { opacity: 0, scale: 1, y: -10 }, 
-            { opacity: 1, y: 0, duration: 0.8, ease: 'power2.out' }
-          )
-          .to(item, { scale: 1.08, duration: 0.4, ease: 'power2.out' }, 0.2)
-          .to(item, { scale: 1, duration: 0.6, ease: 'power2.inOut' });
-        });
+        if (subtextRef.current) {
+          gsap.from(subtextRef.current, {
+            opacity: 0,
+            y: 20,
+            duration: 1.5,
+            ease: 'expo.out',
+            delay: 1.4,
+          });
+        }
       }
-
-      // Subtext reveal
-      gsap.from(subtextRef.current, {
-        opacity: 0,
-        y: 20,
-        duration: 1.5,
-        ease: 'expo.out',
-        delay: 1.4,
-      });
     });
 
-    return () => ctx.revert();
-  }, []);
+    scheduleHeadingFallback(container);
+    return true;
+  }, [
+    clearHeadingFallback,
+    ensureHeadingVisible,
+    getHeadingKey,
+    scheduleHeadingFallback,
+  ]);
 
-  /* ── Cinematic Image Trail Logic ───────────────────────────── */
+  /* ── Entry Animations ──────────────────────────────────────── */
+  useLayoutEffect(() => {
+    let readyFrameId = null;
+    let retryCount = 0;
+    let cancelled = false;
+
+    const startHeadingAnimation = () => {
+      if (cancelled) return;
+
+      const activeHeading = getActiveHeading();
+      const didAnimate = animateHeading(activeHeading, {
+        includeDesktopExtras: activeHeading === headingRef.current,
+      });
+
+      if (!didAnimate && retryCount < HEADING_READY_MAX_RETRIES) {
+        retryCount += 1;
+        readyFrameId = requestAnimationFrame(startHeadingAnimation);
+        return;
+      }
+
+      if (!didAnimate) {
+        ensureHeadingVisible(headingRef.current);
+        ensureHeadingVisible(mobileHeadingRef.current);
+      }
+    };
+
+    const queueHeadingAnimation = () => {
+      retryCount = 0;
+      readyFrameId = requestAnimationFrame(startHeadingAnimation);
+    };
+
+    if (document.fonts?.ready) {
+      document.fonts.ready.then(queueHeadingAnimation).catch(queueHeadingAnimation);
+    } else {
+      queueHeadingAnimation();
+    }
+
+    const desktopMediaQuery = window.matchMedia(DESKTOP_HERO_QUERY);
+    const handleBreakpointChange = () => {
+      const activeHeading = getActiveHeading();
+      const headingKey = getHeadingKey(activeHeading);
+
+      if (!headingKey || animatedHeadings.current.has(headingKey)) {
+        ensureHeadingVisible(activeHeading);
+        return;
+      }
+
+      retryCount = 0;
+      queueHeadingAnimation();
+    };
+
+    desktopMediaQuery.addEventListener('change', handleBreakpointChange);
+
+    return () => {
+      cancelled = true;
+      if (readyFrameId) cancelAnimationFrame(readyFrameId);
+      clearHeadingFallback();
+      headingAnimationCtx.current?.revert();
+      headingAnimationCtx.current = null;
+      desktopMediaQuery.removeEventListener('change', handleBreakpointChange);
+    };
+  }, [animateHeading, clearHeadingFallback, ensureHeadingVisible, getActiveHeading, getHeadingKey]);
+
+  /* ── Cinematic Image Trail Logic (desktop only) ────────────── */
   useEffect(() => {
+    if (!isDesktopHero) return;
+
     const section = sectionRef.current;
     if (!section) return;
 
@@ -410,7 +529,7 @@ const HeroSection = () => {
       window.removeEventListener('resize', handleResize);
       cancelAnimationFrame(rafId.current);
     };
-  }, []);
+  }, [isDesktopHero]);
 
   return (
     <>
@@ -592,11 +711,6 @@ const HeroSection = () => {
           </p>
         </div>
 
-        {/* --- Desktop Portfolio Showcase Slider --- */}
-        <div className="absolute bottom-[118px] left-0 right-0 z-[1000] pointer-events-auto hidden lg:block">
-          <HeroShowcaseSlider animationDelay={1.6} />
-        </div>
-
         {/* --- Top Navigation UI --- */}
         <div 
           ref={navRef}
@@ -659,7 +773,7 @@ const HeroSection = () => {
       </section>
 
       {/* --- MOBILE & TABLET HERO SECTION (lg:hidden, visible on mobile/tablet) --- */}
-      <section className="relative w-full min-h-[90dvh] bg-black flex flex-col justify-between items-center pt-28 pb-10 lg:hidden px-0 text-white overflow-hidden pointer-events-auto">
+      <section className="relative w-full min-h-[100dvh] bg-black flex flex-col lg:hidden px-0 text-white overflow-hidden pointer-events-auto">
         
         {/* Mobile Header Top Row */}
         <div
@@ -707,13 +821,17 @@ const HeroSection = () => {
           </div>
         </div>
 
-        {/* Main Content Area: Brand H1 -> Video Editor -> Tagline */}
-        <div className="flex flex-col items-center text-center px-6 max-w-[500px] mt-6 flex-grow justify-center">
+        {/* Main Content Area: Name Plate -> Role -> Tagline */}
+        <div
+          className="flex flex-col items-center text-center px-6 w-full max-w-[500px] mx-auto"
+          style={{ paddingTop: mobileHeaderOffset + 20 }}
+        >
           
           {/* H1: Parth Panchal (Main Brand focal point, progressive-reveal characters) */}
           <h1
             ref={mobileHeadingRef}
             className="font-display text-[clamp(2.5rem,12vw,4.5rem)] font-black tracking-tighter text-white leading-[0.95] uppercase max-w-[450px]"
+            aria-label="Parth Panchal"
           >
             {"Parth Panchal".split(" ").map((word, wordIndex, arr) => (
               <span key={wordIndex} className="inline-block whitespace-nowrap">
@@ -733,36 +851,38 @@ const HeroSection = () => {
             ))}
           </h1>
 
-          {/* Subtitle Label: Colorist (with premium accent styling and luxurious spacing) */}
+          {/* Subtitle Label: Colorist / Video Editor */}
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1.0, delay: 0.7, ease: [0.16, 1, 0.3, 1] }}
-            className="text-[10px] md:text-[11px] tracking-[0.5em] font-medium text-white/50 uppercase mt-4 -mr-[0.5em]"
+            className="text-[10px] md:text-[11px] tracking-[0.5em] font-medium text-white/50 uppercase mt-3 md:mt-4 -mr-[0.5em]"
           >
-            Colorist
+            Colorist / Video Editor
           </motion.div>
 
-          {/* Tagline H3: Cinematic Storytelling through Precision Editing (luxurious spacing) */}
+          {/* Tagline */}
           <motion.h3
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1.2, delay: 0.9, ease: [0.16, 1, 0.3, 1] }}
-            className="text-xs xs:text-sm md:text-base font-sans font-light text-white/80 leading-relaxed max-w-[340px] uppercase tracking-[0.18em] mt-8 text-center"
+            className="text-xs xs:text-sm md:text-base font-sans font-light text-white/80 leading-relaxed max-w-[340px] uppercase tracking-[0.18em] mt-5 md:mt-6 text-center"
           >
             Emotion. Mood. Atmosphere. <br className="hidden xs:block" /> crafted through color
           </motion.h3>
         </div>
 
-        {/* Portfolio Showcase Slider */}
-        <HeroShowcaseSlider className="w-full mt-10 mb-8 lg:hidden" animationDelay={1.1} />
+        {/* Portfolio Showcase Slider — mobile only (<768px), conditionally mounted */}
+        {showMobileSlider && (
+          <HeroShowcaseSlider className="w-full mt-6 mb-4" animationDelay={1.1} />
+        )}
 
         {/* CTA Area */}
         <motion.div
           initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 1.3 }}
-          className="w-full px-6 flex flex-col items-center gap-3 mb-10 text-center"
+          className={`w-full px-6 flex flex-col items-center gap-3 text-center ${showMobileSlider ? 'mb-6' : 'mt-8 mb-8'}`}
         >
           <span className="text-[10px] text-[#888] font-semibold tracking-widest uppercase">Let's Work Together</span>
           <button
@@ -774,7 +894,7 @@ const HeroSection = () => {
         </motion.div>
 
         {/* Full-Width Scrolling Marquee */}
-        <div className="relative w-full overflow-hidden py-4 bg-[#0a0a0a] border-y border-white/5 pointer-events-none mt-4">
+        <div className="relative w-full overflow-hidden py-4 bg-[#0a0a0a] border-y border-white/5 pointer-events-none mt-auto">
           <div className="animate-marquee flex gap-8 whitespace-nowrap text-[9px] font-bold tracking-[0.3em] text-[#666]">
             <span>COMMERCIALS • REELS • ADS • CINEMATIC FILMS • COMMERCIALS • REELS • ADS • CINEMATIC FILMS •</span>
             <span>COMMERCIALS • REELS • ADS • CINEMATIC FILMS • COMMERCIALS • REELS • ADS • CINEMATIC FILMS •</span>

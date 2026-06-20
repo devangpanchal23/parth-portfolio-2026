@@ -22,3 +22,4 @@ export function useMediaQuery(query) {
 }
 
 export const DESKTOP_NAV_QUERY = '(min-width: 768px)';
+export const MOBILE_SLIDER_QUERY = '(max-width: 767px)';
